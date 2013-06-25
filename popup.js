@@ -21080,6 +21080,6 @@ cljs.core.UUID.prototype.toString = function() {
   var this$ = this;
   return cljs.core.pr_str.call(null, this$)
 };
-goog.provide("background");
+goog.provide("popup");
 goog.require("cljs.core");
-console.log("background");
+document.write("popup");
