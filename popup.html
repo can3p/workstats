@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-    123
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="timer-body">
+      <ul class="timer-list">
+        <li class="timer-item"><label><input type="radio" name="action" value="1">Программирование</label></li>
+        <li class="timer-item"><label><input type="radio" name="action" value="2">Интернеты</label></li>
+        <li class="timer-item"><label><input type="radio" name="action" value="3">Совещания</label></li>
+        <li class="timer-item"><label><input type="radio" name="action" value="4">Обед/туалет</label></li>
+      </ul>
+      <div class="timer-current-time">15:20</div>
+      <input class="timer-new" type="text" placeholder="Enter new section" />
+      <input type="button" class="timer-reset popup-button" value="Start over again" />
+      <input type="button" class="timer-switch-profile popup-button" value="Switch profile" />
+      <a class="timer-links" href="#">Stats & options</a>
+    </div>
     <script type="text/javascript" src="popup.js"></script>
-</body>
+  </body>
 </html>
