@@ -1,0 +1,60 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 100%;
+}
+
+body {
+    margin: 10px;
+}
+
+label {
+    white-space: nowrap;
+    line-height: 1.8;
+}
+
+label:active {
+    background-color: #ffe;
+}
+
+input[type=radio] {
+    margin-right: 10px;
+}
+
+.timer-body {
+    font-size: 14px;
+}
+
+.timer-current-time {
+    text-align: center;
+    font-size: 25px;
+    line-height: 1.2;
+    color: #C40000;
+}
+
+.timer-new {
+    width: 100%;
+    height: 1.8em;
+    margin-top: 10px;
+}
+
+.popup-button {
+    margin-top: 10px;
+    width: 100%;
+    height: 1.8em;
+    border: 1px solid black;
+    background-color: #eee;
+}
+
+.timer-reset:hover {
+    background-color: #dedede;
+    cursor: pointer;
+}
+
+.timer-links {
+    display: block;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 12px;
+}

@@ -29030,65 +29030,67 @@ clojure.string.escape = function escape(s, cmap) {
     break
   }
 };
-goog.provide("popup");
+goog.provide("popup.util");
 goog.require("cljs.core");
 goog.require("clojure.string");
-popup.$ = function $(selector) {
+popup.util.$ = function $(selector) {
   return document.querySelector(selector)
 };
-popup.timer = popup.$.call(null, ".timer-current-time");
-popup.start_time = (new Date).getTime();
-popup.div = function div(number, divider) {
+popup.util.div = function div(number, divider) {
   var modulo = cljs.core.mod.call(null, number, divider);
   return(number - modulo) / divider
 };
-popup.log = function log(msg) {
+popup.util.log = function log(msg) {
   return console.log(msg)
 };
-popup.populate_string = function populate_string(chr, len) {
+popup.util.populate_string = function populate_string(chr, len) {
   if(cljs.core._EQ_.call(null, len, 0)) {
     return""
   }else {
     return chr + populate_string.call(null, chr, len - 1)
   }
 };
-popup.pad = function pad(msg, len, chr) {
+popup.util.pad = function pad(msg, len, chr) {
   var base_str = msg.toString();
   var add_len = len - cljs.core.count.call(null, base_str);
   if(add_len < 0) {
     return base_str
   }else {
-    return popup.populate_string.call(null, chr, add_len) + base_str
+    return popup.util.populate_string.call(null, chr, add_len) + base_str
   }
 };
-popup.format_time = function format_time(time) {
-  var stamp = popup.div.call(null, time, 1E3);
+popup.util.format_time = function format_time(time) {
+  var stamp = popup.util.div.call(null, time, 1E3);
   var format_recur = function(stamp__$1, times) {
     while(true) {
       if(cljs.core._EQ_.call(null, stamp__$1, 0)) {
         if(cljs.core.count.call(null, times) > 0) {
           return clojure.string.join.call(null, ":", cljs.core.reverse.call(null, times))
         }else {
-          return"0"
+          return"00"
         }
       }else {
-        var remainder = popup.pad.call(null, cljs.core.mod.call(null, stamp__$1, 60), 2, "0");
-        var divided = popup.div.call(null, stamp__$1, 60);
-        var G__3993 = divided;
-        var G__3994 = cljs.core.conj.call(null, times, remainder);
-        stamp__$1 = G__3993;
-        times = G__3994;
+        var remainder = popup.util.pad.call(null, cljs.core.mod.call(null, stamp__$1, 60), 2, "0");
+        var divided = popup.util.div.call(null, stamp__$1, 60);
+        var G__7146 = divided;
+        var G__7147 = cljs.core.conj.call(null, times, remainder);
+        stamp__$1 = G__7146;
+        times = G__7147;
         continue
       }
       break
     }
   };
-  popup.log.call(null, stamp);
   return format_recur.call(null, stamp, cljs.core.PersistentVector.EMPTY)
 };
+goog.provide("popup");
+goog.require("cljs.core");
+goog.require("popup.util");
+popup.timer = popup.util.$.call(null, ".timer-current-time");
+popup.start_time = (new Date).getTime();
 popup.set_time_BANG_ = function set_time_BANG_(d) {
   var time = d.getTime();
-  var date_str = popup.format_time.call(null, time - popup.start_time);
+  var date_str = popup.util.format_time.call(null, time - popup.start_time);
   return popup.timer.innerHTML = date_str
 };
 popup.update_time = function update_time() {
