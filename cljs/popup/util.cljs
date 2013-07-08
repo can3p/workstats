@@ -33,9 +33,15 @@
                          (if (> (count times) 0)
                            (string/join ":" (reverse times))
                            "00")
-                         (let [
-                               remainder (pad (mod stamp 60) 2 "0")
-                               divided (div stamp 60) ]
-                           (recur divided
-                                  (conj times remainder)))))]
+                         (if (= (count times) 2)
+                           (recur 0
+                                  (conj times stamp))
+                           (let [
+                                 remainder (pad (mod stamp 60) 2 "0")
+                                 divided (div stamp 60) ]
+                             (recur divided
+                                    (conj times remainder))))
+                         )
+                       )
+        ]
     (format-recur stamp [])))
