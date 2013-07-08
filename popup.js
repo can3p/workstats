@@ -29036,6 +29036,12 @@ goog.require("clojure.string");
 popup.util.$ = function $(selector) {
   return document.querySelector(selector)
 };
+popup.util.bind_event = function bind_event(element, event, handle) {
+  return element.addEventListener(event, handle, false)
+};
+popup.util.click = function click(element, handle) {
+  return popup.util.bind_event.call(null, element, "click", handle)
+};
 popup.util.div = function div(number, divider) {
   var modulo = cljs.core.mod.call(null, number, divider);
   return(number - modulo) / divider
@@ -29070,13 +29076,21 @@ popup.util.format_time = function format_time(time) {
           return"00"
         }
       }else {
-        var remainder = popup.util.pad.call(null, cljs.core.mod.call(null, stamp__$1, 60), 2, "0");
-        var divided = popup.util.div.call(null, stamp__$1, 60);
-        var G__7146 = divided;
-        var G__7147 = cljs.core.conj.call(null, times, remainder);
-        stamp__$1 = G__7146;
-        times = G__7147;
-        continue
+        if(cljs.core._EQ_.call(null, cljs.core.count.call(null, times), 2)) {
+          var G__15818 = 0;
+          var G__15819 = cljs.core.conj.call(null, times, stamp__$1);
+          stamp__$1 = G__15818;
+          times = G__15819;
+          continue
+        }else {
+          var remainder = popup.util.pad.call(null, cljs.core.mod.call(null, stamp__$1, 60), 2, "0");
+          var divided = popup.util.div.call(null, stamp__$1, 60);
+          var G__15820 = divided;
+          var G__15821 = cljs.core.conj.call(null, times, remainder);
+          stamp__$1 = G__15820;
+          times = G__15821;
+          continue
+        }
       }
       break
     }
@@ -29087,14 +29101,50 @@ goog.provide("popup");
 goog.require("cljs.core");
 goog.require("popup.util");
 popup.timer = popup.util.$.call(null, ".timer-current-time");
-popup.start_time = (new Date).getTime();
-popup.set_time_BANG_ = function set_time_BANG_(d) {
-  var time = d.getTime();
-  var date_str = popup.util.format_time.call(null, time - popup.start_time);
-  return popup.timer.innerHTML = date_str
+popup.pause = popup.util.$.call(null, ".timer-pause");
+popup.get_current_time = function get_current_time() {
+  return(new Date).getTime()
+};
+popup.time_struct = cljs.core.atom.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'last-time", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last-time":popup.get_current_time.call(null), "\ufdd0'ranges":cljs.core.PersistentVector.EMPTY, "\ufdd0'sum":0}));
+popup.get_time = function get_time() {
+  var time = popup.get_current_time.call(null);
+  return(new cljs.core.Keyword("\ufdd0'sum")).call(null, cljs.core.deref.call(null, popup.time_struct)) + (time - (new cljs.core.Keyword("\ufdd0'last-time")).call(null, cljs.core.deref.call(null, popup.time_struct)))
+};
+popup.stop_time = function stop_time() {
+  var map__16454 = cljs.core.deref.call(null, popup.time_struct);
+  var map__16454__$1 = cljs.core.seq_QMARK_.call(null, map__16454) ? cljs.core.apply.call(null, cljs.core.hash_map, map__16454) : map__16454;
+  var sum = cljs.core._lookup.call(null, map__16454__$1, "\ufdd0'sum", null);
+  var ranges = cljs.core._lookup.call(null, map__16454__$1, "\ufdd0'ranges", null);
+  var last_time = cljs.core._lookup.call(null, map__16454__$1, "\ufdd0'last-time", null);
+  var time = popup.get_current_time.call(null);
+  cljs.core.reset_BANG_.call(null, popup.time_struct, cljs.core.ObjMap.fromObject(["\ufdd0'last-time", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last-time":null, "\ufdd0'ranges":cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last_time, time], true)), "\ufdd0'sum":sum + (time - last_time)}));
+  return popup.get_time.call(null)
+};
+popup.start_time = function start_time() {
+  cljs.core.reset_BANG_.call(null, popup.time_struct, cljs.core.assoc.call(null, cljs.core.deref.call(null, popup.time_struct), "\ufdd0'last-time", popup.get_current_time.call(null)));
+  return popup.get_time.call(null)
+};
+popup.time_started_QMARK_ = function time_started_QMARK_() {
+  return cljs.core.not_EQ_.call(null, null, (new cljs.core.Keyword("\ufdd0'last-time")).call(null, cljs.core.deref.call(null, popup.time_struct)))
+};
+popup.set_time_BANG_ = function set_time_BANG_(time) {
+  var time_str = popup.util.format_time.call(null, time);
+  return popup.timer.innerHTML = time_str
 };
 popup.update_time = function update_time() {
-  return popup.set_time_BANG_.call(null, new Date)
+  if(cljs.core.truth_(popup.time_started_QMARK_.call(null))) {
+    popup.set_time_BANG_.call(null, popup.get_time.call(null));
+    return setTimeout(update_time, 1E3)
+  }else {
+    return null
+  }
 };
-setInterval(popup.update_time, 1E3);
+popup.util.click.call(null, popup.pause, function() {
+  if(cljs.core.truth_(popup.time_started_QMARK_.call(null))) {
+    return popup.stop_time.call(null)
+  }else {
+    popup.start_time.call(null);
+    return popup.update_time.call(null)
+  }
+});
 popup.update_time.call(null);

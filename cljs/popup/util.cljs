@@ -5,6 +5,12 @@
 (defn $ [selector]
   (.querySelector js/document selector))
 
+(defn bind-event [element event handle]
+  (.addEventListener element event handle false))
+
+(defn click [element handle]
+  (bind-event element "click" handle))
+
 (defn div [number divider]
   (let [modulo (mod number divider)]
     (/ (- number modulo) divider)))
