@@ -10,13 +10,6 @@
             :ring {:handler server.core/handler}
             :cljsbuild {
                         :builds {
-                                ;:repl
-                                ;{
-                                 ;:source-paths ["cljs/debug"]
-                                 ;:compiler {
-                                            ;:output-to "debug.js"
-                                            ;:optimizations :whitespace
-                                            ;:pretty-print true}}
                                  :background
                                  {
                                   :source-paths ["cljs/background"]

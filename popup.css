@@ -47,7 +47,7 @@ input[type=radio] {
     background-color: #eee;
 }
 
-.timer-reset:hover {
+.popup-button:hover {
     background-color: #dedede;
     cursor: pointer;
 }

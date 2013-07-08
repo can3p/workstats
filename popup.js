@@ -22192,6 +22192,129 @@ clojure.browser.event.has_listener = function has_listener(obj, opt_type, opt_ca
 clojure.browser.event.remove_all = function remove_all(opt_obj, opt_type, opt_capt) {
   return null
 };
+goog.provide("goog.json");
+goog.provide("goog.json.Serializer");
+goog.json.isValid_ = function(s) {
+  if(/^\s*$/.test(s)) {
+    return false
+  }
+  var backslashesRe = /\\["\\\/bfnrtu]/g;
+  var simpleValuesRe = /"[^"\\\n\r\u2028\u2029\x00-\x08\x10-\x1f\x80-\x9f]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
+  var openBracketsRe = /(?:^|:|,)(?:[\s\u2028\u2029]*\[)+/g;
+  var remainderRe = /^[\],:{}\s\u2028\u2029]*$/;
+  return remainderRe.test(s.replace(backslashesRe, "@").replace(simpleValuesRe, "]").replace(openBracketsRe, ""))
+};
+goog.json.parse = function(s) {
+  var o = String(s);
+  if(goog.json.isValid_(o)) {
+    try {
+      return eval("(" + o + ")")
+    }catch(ex) {
+    }
+  }
+  throw Error("Invalid JSON string: " + o);
+};
+goog.json.unsafeParse = function(s) {
+  return eval("(" + s + ")")
+};
+goog.json.Replacer;
+goog.json.serialize = function(object, opt_replacer) {
+  return(new goog.json.Serializer(opt_replacer)).serialize(object)
+};
+goog.json.Serializer = function(opt_replacer) {
+  this.replacer_ = opt_replacer
+};
+goog.json.Serializer.prototype.serialize = function(object) {
+  var sb = [];
+  this.serialize_(object, sb);
+  return sb.join("")
+};
+goog.json.Serializer.prototype.serialize_ = function(object, sb) {
+  switch(typeof object) {
+    case "string":
+      this.serializeString_(object, sb);
+      break;
+    case "number":
+      this.serializeNumber_(object, sb);
+      break;
+    case "boolean":
+      sb.push(object);
+      break;
+    case "undefined":
+      sb.push("null");
+      break;
+    case "object":
+      if(object == null) {
+        sb.push("null");
+        break
+      }
+      if(goog.isArray(object)) {
+        this.serializeArray(object, sb);
+        break
+      }
+      this.serializeObject_(object, sb);
+      break;
+    case "function":
+      break;
+    default:
+      throw Error("Unknown type: " + typeof object);
+  }
+};
+goog.json.Serializer.charToJsonCharCache_ = {'"':'\\"', "\\":"\\\\", "/":"\\/", "\b":"\\b", "\f":"\\f", "\n":"\\n", "\r":"\\r", "\t":"\\t", "\x0B":"\\u000b"};
+goog.json.Serializer.charsToReplace_ = /\uffff/.test("\uffff") ? /[\\\"\x00-\x1f\x7f-\uffff]/g : /[\\\"\x00-\x1f\x7f-\xff]/g;
+goog.json.Serializer.prototype.serializeString_ = function(s, sb) {
+  sb.push('"', s.replace(goog.json.Serializer.charsToReplace_, function(c) {
+    if(c in goog.json.Serializer.charToJsonCharCache_) {
+      return goog.json.Serializer.charToJsonCharCache_[c]
+    }
+    var cc = c.charCodeAt(0);
+    var rv = "\\u";
+    if(cc < 16) {
+      rv += "000"
+    }else {
+      if(cc < 256) {
+        rv += "00"
+      }else {
+        if(cc < 4096) {
+          rv += "0"
+        }
+      }
+    }
+    return goog.json.Serializer.charToJsonCharCache_[c] = rv + cc.toString(16)
+  }), '"')
+};
+goog.json.Serializer.prototype.serializeNumber_ = function(n, sb) {
+  sb.push(isFinite(n) && !isNaN(n) ? n : "null")
+};
+goog.json.Serializer.prototype.serializeArray = function(arr, sb) {
+  var l = arr.length;
+  sb.push("[");
+  var sep = "";
+  for(var i = 0;i < l;i++) {
+    sb.push(sep);
+    var value = arr[i];
+    this.serialize_(this.replacer_ ? this.replacer_.call(arr, String(i), value) : value, sb);
+    sep = ","
+  }
+  sb.push("]")
+};
+goog.json.Serializer.prototype.serializeObject_ = function(obj, sb) {
+  sb.push("{");
+  var sep = "";
+  for(var key in obj) {
+    if(Object.prototype.hasOwnProperty.call(obj, key)) {
+      var value = obj[key];
+      if(typeof value != "function") {
+        sb.push(sep);
+        this.serializeString_(key, sb);
+        sb.push(":");
+        this.serialize_(this.replacer_ ? this.replacer_.call(obj, key, value) : value, sb);
+        sep = ","
+      }
+    }
+  }
+  sb.push("}")
+};
 goog.provide("goog.structs");
 goog.require("goog.array");
 goog.require("goog.object");
@@ -25421,129 +25544,6 @@ goog.events.EventHandler.prototype.disposeInternal = function() {
 };
 goog.events.EventHandler.prototype.handleEvent = function(e) {
   throw Error("EventHandler.handleEvent not implemented");
-};
-goog.provide("goog.json");
-goog.provide("goog.json.Serializer");
-goog.json.isValid_ = function(s) {
-  if(/^\s*$/.test(s)) {
-    return false
-  }
-  var backslashesRe = /\\["\\\/bfnrtu]/g;
-  var simpleValuesRe = /"[^"\\\n\r\u2028\u2029\x00-\x08\x10-\x1f\x80-\x9f]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
-  var openBracketsRe = /(?:^|:|,)(?:[\s\u2028\u2029]*\[)+/g;
-  var remainderRe = /^[\],:{}\s\u2028\u2029]*$/;
-  return remainderRe.test(s.replace(backslashesRe, "@").replace(simpleValuesRe, "]").replace(openBracketsRe, ""))
-};
-goog.json.parse = function(s) {
-  var o = String(s);
-  if(goog.json.isValid_(o)) {
-    try {
-      return eval("(" + o + ")")
-    }catch(ex) {
-    }
-  }
-  throw Error("Invalid JSON string: " + o);
-};
-goog.json.unsafeParse = function(s) {
-  return eval("(" + s + ")")
-};
-goog.json.Replacer;
-goog.json.serialize = function(object, opt_replacer) {
-  return(new goog.json.Serializer(opt_replacer)).serialize(object)
-};
-goog.json.Serializer = function(opt_replacer) {
-  this.replacer_ = opt_replacer
-};
-goog.json.Serializer.prototype.serialize = function(object) {
-  var sb = [];
-  this.serialize_(object, sb);
-  return sb.join("")
-};
-goog.json.Serializer.prototype.serialize_ = function(object, sb) {
-  switch(typeof object) {
-    case "string":
-      this.serializeString_(object, sb);
-      break;
-    case "number":
-      this.serializeNumber_(object, sb);
-      break;
-    case "boolean":
-      sb.push(object);
-      break;
-    case "undefined":
-      sb.push("null");
-      break;
-    case "object":
-      if(object == null) {
-        sb.push("null");
-        break
-      }
-      if(goog.isArray(object)) {
-        this.serializeArray(object, sb);
-        break
-      }
-      this.serializeObject_(object, sb);
-      break;
-    case "function":
-      break;
-    default:
-      throw Error("Unknown type: " + typeof object);
-  }
-};
-goog.json.Serializer.charToJsonCharCache_ = {'"':'\\"', "\\":"\\\\", "/":"\\/", "\b":"\\b", "\f":"\\f", "\n":"\\n", "\r":"\\r", "\t":"\\t", "\x0B":"\\u000b"};
-goog.json.Serializer.charsToReplace_ = /\uffff/.test("\uffff") ? /[\\\"\x00-\x1f\x7f-\uffff]/g : /[\\\"\x00-\x1f\x7f-\xff]/g;
-goog.json.Serializer.prototype.serializeString_ = function(s, sb) {
-  sb.push('"', s.replace(goog.json.Serializer.charsToReplace_, function(c) {
-    if(c in goog.json.Serializer.charToJsonCharCache_) {
-      return goog.json.Serializer.charToJsonCharCache_[c]
-    }
-    var cc = c.charCodeAt(0);
-    var rv = "\\u";
-    if(cc < 16) {
-      rv += "000"
-    }else {
-      if(cc < 256) {
-        rv += "00"
-      }else {
-        if(cc < 4096) {
-          rv += "0"
-        }
-      }
-    }
-    return goog.json.Serializer.charToJsonCharCache_[c] = rv + cc.toString(16)
-  }), '"')
-};
-goog.json.Serializer.prototype.serializeNumber_ = function(n, sb) {
-  sb.push(isFinite(n) && !isNaN(n) ? n : "null")
-};
-goog.json.Serializer.prototype.serializeArray = function(arr, sb) {
-  var l = arr.length;
-  sb.push("[");
-  var sep = "";
-  for(var i = 0;i < l;i++) {
-    sb.push(sep);
-    var value = arr[i];
-    this.serialize_(this.replacer_ ? this.replacer_.call(arr, String(i), value) : value, sb);
-    sep = ","
-  }
-  sb.push("]")
-};
-goog.json.Serializer.prototype.serializeObject_ = function(obj, sb) {
-  sb.push("{");
-  var sep = "";
-  for(var key in obj) {
-    if(Object.prototype.hasOwnProperty.call(obj, key)) {
-      var value = obj[key];
-      if(typeof value != "function") {
-        sb.push(sep);
-        this.serializeString_(key, sb);
-        sb.push(":");
-        this.serialize_(this.replacer_ ? this.replacer_.call(obj, key, value) : value, sb);
-        sep = ","
-      }
-    }
-  }
-  sb.push("}")
 };
 goog.provide("goog.structs.Collection");
 goog.structs.Collection = function() {
@@ -28857,6 +28857,42 @@ goog.provide("debug");
 goog.require("cljs.core");
 goog.require("clojure.browser.repl");
 clojure.browser.repl.connect.call(null, "http://localhost:9000/repl");
+goog.provide("popup.timer");
+goog.require("cljs.core");
+popup.timer.get_current = function get_current() {
+  return(new Date).getTime()
+};
+popup.timer.get_length = function get_length(timer) {
+  var time = popup.timer.get_current.call(null);
+  return(new cljs.core.Keyword("\ufdd0'sum")).call(null, timer) + (time - (new cljs.core.Keyword("\ufdd0'last")).call(null, timer))
+};
+popup.timer.stop = function stop(timer) {
+  var map__5857 = timer;
+  var map__5857__$1 = cljs.core.seq_QMARK_.call(null, map__5857) ? cljs.core.apply.call(null, cljs.core.hash_map, map__5857) : map__5857;
+  var sum = cljs.core._lookup.call(null, map__5857__$1, "\ufdd0'sum", null);
+  var ranges = cljs.core._lookup.call(null, map__5857__$1, "\ufdd0'ranges", null);
+  var last = cljs.core._lookup.call(null, map__5857__$1, "\ufdd0'last", null);
+  var time = popup.timer.get_current.call(null);
+  return cljs.core.assoc.call(null, timer, "\ufdd0'last", null, "\ufdd0'ranges", cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last, time], true)), "\ufdd0'sum", sum + (time - last))
+};
+popup.timer.start = function start(timer) {
+  return cljs.core.assoc.call(null, timer, "\ufdd0'last", popup.timer.get_current.call(null))
+};
+popup.timer.create = function create() {
+  return cljs.core.ObjMap.fromObject(["\ufdd0'last", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last":popup.timer.get_current.call(null), "\ufdd0'ranges":cljs.core.PersistentVector.EMPTY, "\ufdd0'sum":0})
+};
+popup.timer.started_QMARK_ = function started_QMARK_(timer) {
+  return cljs.core.not_EQ_.call(null, null, (new cljs.core.Keyword("\ufdd0'last")).call(null, timer))
+};
+popup.timer.start_BANG_ = function start_BANG_(timer) {
+  return cljs.core.swap_BANG_.call(null, timer, popup.timer.start)
+};
+popup.timer.stop_BANG_ = function stop_BANG_(timer) {
+  return cljs.core.swap_BANG_.call(null, timer, popup.timer.stop)
+};
+popup.timer.create_BANG_ = function create_BANG_(timer) {
+  return cljs.core.reset_BANG_.call(null, timer, popup.timer.create.call(null))
+};
 goog.provide("clojure.string");
 goog.require("cljs.core");
 goog.require("goog.string.StringBuffer");
@@ -29100,51 +29136,34 @@ popup.util.format_time = function format_time(time) {
 goog.provide("popup");
 goog.require("cljs.core");
 goog.require("popup.util");
-popup.timer = popup.util.$.call(null, ".timer-current-time");
+goog.require("popup.timer");
+popup.timer_node = popup.util.$.call(null, ".timer-current-time");
 popup.pause = popup.util.$.call(null, ".timer-pause");
-popup.get_current_time = function get_current_time() {
-  return(new Date).getTime()
-};
-popup.time_struct = cljs.core.atom.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'last-time", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last-time":popup.get_current_time.call(null), "\ufdd0'ranges":cljs.core.PersistentVector.EMPTY, "\ufdd0'sum":0}));
-popup.get_time = function get_time() {
-  var time = popup.get_current_time.call(null);
-  return(new cljs.core.Keyword("\ufdd0'sum")).call(null, cljs.core.deref.call(null, popup.time_struct)) + (time - (new cljs.core.Keyword("\ufdd0'last-time")).call(null, cljs.core.deref.call(null, popup.time_struct)))
-};
-popup.stop_time = function stop_time() {
-  var map__16454 = cljs.core.deref.call(null, popup.time_struct);
-  var map__16454__$1 = cljs.core.seq_QMARK_.call(null, map__16454) ? cljs.core.apply.call(null, cljs.core.hash_map, map__16454) : map__16454;
-  var sum = cljs.core._lookup.call(null, map__16454__$1, "\ufdd0'sum", null);
-  var ranges = cljs.core._lookup.call(null, map__16454__$1, "\ufdd0'ranges", null);
-  var last_time = cljs.core._lookup.call(null, map__16454__$1, "\ufdd0'last-time", null);
-  var time = popup.get_current_time.call(null);
-  cljs.core.reset_BANG_.call(null, popup.time_struct, cljs.core.ObjMap.fromObject(["\ufdd0'last-time", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last-time":null, "\ufdd0'ranges":cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last_time, time], true)), "\ufdd0'sum":sum + (time - last_time)}));
-  return popup.get_time.call(null)
-};
-popup.start_time = function start_time() {
-  cljs.core.reset_BANG_.call(null, popup.time_struct, cljs.core.assoc.call(null, cljs.core.deref.call(null, popup.time_struct), "\ufdd0'last-time", popup.get_current_time.call(null)));
-  return popup.get_time.call(null)
-};
-popup.time_started_QMARK_ = function time_started_QMARK_() {
-  return cljs.core.not_EQ_.call(null, null, (new cljs.core.Keyword("\ufdd0'last-time")).call(null, cljs.core.deref.call(null, popup.time_struct)))
-};
+popup.restart = popup.util.$.call(null, ".timer-reset");
+popup.time_struct = cljs.core.atom.call(null, popup.timer.create.call(null));
 popup.set_time_BANG_ = function set_time_BANG_(time) {
   var time_str = popup.util.format_time.call(null, time);
-  return popup.timer.innerHTML = time_str
+  return popup.timer_node.innerHTML = time_str
 };
 popup.update_time = function update_time() {
-  if(cljs.core.truth_(popup.time_started_QMARK_.call(null))) {
-    popup.set_time_BANG_.call(null, popup.get_time.call(null));
+  if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+    popup.set_time_BANG_.call(null, popup.timer.get_length.call(null, cljs.core.deref.call(null, popup.time_struct)));
     return setTimeout(update_time, 1E3)
   }else {
     return null
   }
 };
 popup.util.click.call(null, popup.pause, function() {
-  if(cljs.core.truth_(popup.time_started_QMARK_.call(null))) {
-    return popup.stop_time.call(null)
+  if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+    return popup.timer.stop_BANG_.call(null, popup.time_struct)
   }else {
-    popup.start_time.call(null);
+    popup.timer.start_BANG_.call(null, popup.time_struct);
     return popup.update_time.call(null)
   }
+});
+popup.util.click.call(null, popup.restart, function() {
+  popup.timer.stop_BANG_.call(null, popup.time_struct);
+  popup.timer.create_BANG_.call(null, popup.time_struct);
+  return popup.update_time.call(null)
 });
 popup.update_time.call(null);

@@ -1,55 +1,32 @@
 (ns popup
   (:require 
+    [popup.timer :as timer]
     [popup.util :as util]))
 
-(def timer (util/$ ".timer-current-time"))
+(def timer-node (util/$ ".timer-current-time"))
 (def pause (util/$ ".timer-pause"))
-
-(defn get-current-time []
-  (.getTime (new js/Date)))
-
-(def time-struct (atom {
-                        :last-time (get-current-time)
-                        :ranges []
-                        :sum 0
-                        }))
-
-(defn get-time []
-  (let [
-        time (get-current-time)]
-    (+ (:sum @time-struct)
-       (- time (:last-time @time-struct)))))
-
-(defn stop-time []
-  (let [{:keys (last-time ranges sum)} @time-struct
-        time (get-current-time)]
-    (reset! time-struct {
-                         :last-time nil
-                         :ranges (conj ranges [last-time time])
-                         :sum (+ sum (- time last-time))})
-    (get-time)))
-
-(defn start-time []
-  (reset! time-struct (assoc @time-struct
-                             :last-time (get-current-time)))
-  (get-time))
-
-(defn time-started? []
-  (not= nil (:last-time @time-struct)))
+(def restart (util/$ ".timer-reset"))
+(def time-struct (atom (timer/create)))
 
 (defn set-time! [time]
   (let [
         time-str (util/format-time time)]
-    (set! (.-innerHTML timer) time-str)))
+    (set! (.-innerHTML timer-node) time-str)))
 
 (defn update-time []
-  (when (time-started?)
-    (set-time! (get-time))
+  (when (timer/started? @time-struct)
+    (set-time! (timer/get-length @time-struct))
     (js/setTimeout update-time 1000)))
 
-(util/click pause (fn [] (if (time-started?)
-                           (stop-time)
+(util/click pause (fn [] (if (timer/started? @time-struct)
+                           (timer/stop! time-struct)
                            (do
-                             (start-time)
+                             (timer/start! time-struct)
                              (update-time)))))
+
+(util/click restart (fn []
+                      (timer/stop! time-struct)
+                      (timer/create! time-struct)
+                      (update-time)))
+
 (update-time)
