@@ -1,4 +1,4 @@
-(ns popup.localstorage
+(ns lib.localstorage
   (:require [cljs.reader :as reader]))
 
 (defn get-item [item]

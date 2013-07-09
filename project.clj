@@ -10,6 +10,15 @@
             :ring {:handler server.core/handler}
             :cljsbuild {
                         :builds {
+                                 :options
+                                 {
+                                  :source-paths ["cljs/options"
+                                                 "cljs/lib"
+                                                 "cljs/debug"]
+                                  :compiler {
+                                             :output-to "options.js"
+                                             :optimizations :whitespace
+                                             :pretty-print true}}
                                  :background
                                  {
                                   :source-paths ["cljs/background"]
@@ -19,7 +28,9 @@
                                              :pretty-print true}}
                                  :popup
                                  {
-                                  :source-paths ["cljs/popup", "cljs/debug"]
+                                  :source-paths ["cljs/popup"
+                                                 "cljs/lib"
+                                                 "cljs/debug"]
                                   :compiler {
                                              :output-to "popup.js"
                                              :optimizations :whitespace

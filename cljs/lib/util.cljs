@@ -1,4 +1,4 @@
-(ns popup.util
+(ns lib.util
   (:require 
     [clojure.string :as string]))
 

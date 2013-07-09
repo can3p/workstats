@@ -1,8 +1,8 @@
 (ns popup
   (:require 
-    [popup.localstorage :as ls]
+    [lib.localstorage :as ls]
     [popup.timer :as timer]
-    [popup.util :as util]))
+    [lib.util :as util]))
 
 (def timer-node (util/$ ".timer-current-time"))
 (def pause (util/$ ".timer-pause"))
