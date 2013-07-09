@@ -29133,40 +29133,6 @@ popup.util.format_time = function format_time(time) {
   };
   return format_recur.call(null, stamp, cljs.core.PersistentVector.EMPTY)
 };
-goog.provide("popup");
-goog.require("cljs.core");
-goog.require("popup.util");
-goog.require("popup.timer");
-popup.timer_node = popup.util.$.call(null, ".timer-current-time");
-popup.pause = popup.util.$.call(null, ".timer-pause");
-popup.restart = popup.util.$.call(null, ".timer-reset");
-popup.time_struct = cljs.core.atom.call(null, popup.timer.create.call(null));
-popup.set_time_BANG_ = function set_time_BANG_(time) {
-  var time_str = popup.util.format_time.call(null, time);
-  return popup.timer_node.innerHTML = time_str
-};
-popup.update_time = function update_time() {
-  if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
-    popup.set_time_BANG_.call(null, popup.timer.get_length.call(null, cljs.core.deref.call(null, popup.time_struct)));
-    return setTimeout(update_time, 1E3)
-  }else {
-    return null
-  }
-};
-popup.util.click.call(null, popup.pause, function() {
-  if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
-    return popup.timer.stop_BANG_.call(null, popup.time_struct)
-  }else {
-    popup.timer.start_BANG_.call(null, popup.time_struct);
-    return popup.update_time.call(null)
-  }
-});
-popup.util.click.call(null, popup.restart, function() {
-  popup.timer.stop_BANG_.call(null, popup.time_struct);
-  popup.timer.create_BANG_.call(null, popup.time_struct);
-  return popup.update_time.call(null)
-});
-popup.update_time.call(null);
 goog.provide("cljs.reader");
 goog.require("cljs.core");
 goog.require("goog.string");
@@ -30202,3 +30168,42 @@ popup.localstorage.get_item = function get_item(item) {
 popup.localstorage.set_item = function set_item(item, value) {
   return localStorage.setItem(item, cljs.core.pr_str.call(null, value))
 };
+goog.provide("popup");
+goog.require("cljs.core");
+goog.require("popup.util");
+goog.require("popup.timer");
+goog.require("popup.localstorage");
+popup.timer_node = popup.util.$.call(null, ".timer-current-time");
+popup.pause = popup.util.$.call(null, ".timer-pause");
+popup.restart = popup.util.$.call(null, ".timer-reset");
+popup.time_struct = cljs.core.atom.call(null, popup.timer.create.call(null));
+popup.set_time_BANG_ = function set_time_BANG_(time) {
+  var time_str = popup.util.format_time.call(null, time);
+  return popup.timer_node.innerHTML = time_str
+};
+popup.update_time = function update_time() {
+  if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+    popup.set_time_BANG_.call(null, popup.timer.get_length.call(null, cljs.core.deref.call(null, popup.time_struct)));
+    return setTimeout(update_time, 1E3)
+  }else {
+    return null
+  }
+};
+popup.store_result = function store_result() {
+  return popup.localstorage.set_item.call(null, "result_" + popup.timer.get_current.call(null), cljs.core.deref.call(null, popup.time_struct))
+};
+popup.util.click.call(null, popup.pause, function() {
+  if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+    return popup.timer.stop_BANG_.call(null, popup.time_struct)
+  }else {
+    popup.timer.start_BANG_.call(null, popup.time_struct);
+    return popup.update_time.call(null)
+  }
+});
+popup.util.click.call(null, popup.restart, function() {
+  popup.timer.stop_BANG_.call(null, popup.time_struct);
+  popup.store_result.call(null);
+  popup.timer.create_BANG_.call(null, popup.time_struct);
+  return popup.update_time.call(null)
+});
+popup.update_time.call(null);
