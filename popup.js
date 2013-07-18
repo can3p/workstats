@@ -30177,6 +30177,7 @@ goog.require("lib.util");
 goog.require("popup.timer");
 goog.require("lib.localstorage");
 popup.timer_node = lib.util.$.call(null, ".timer-current-time");
+popup.body = lib.util.$.call(null, ".timer-body");
 popup.pause = lib.util.$.call(null, ".timer-pause");
 popup.restart = lib.util.$.call(null, ".timer-reset");
 popup.time_struct = cljs.core.atom.call(null, popup.timer.create.call(null));
@@ -30195,10 +30196,21 @@ popup.update_time = function update_time() {
 popup.store_result = function store_result() {
   return lib.localstorage.set_item.call(null, "result_" + popup.timer.get_current.call(null), cljs.core.deref.call(null, popup.time_struct))
 };
+popup.set_timer_state_BANG_ = function set_timer_state_BANG_(state) {
+  if(cljs.core._EQ_.call(null, state, "paused")) {
+    popup.body.classList.remove("timer-runs");
+    return popup.body.classList.add("timer-paused")
+  }else {
+    popup.body.classList.add("timer-runs");
+    return popup.body.classList.remove("timer-paused")
+  }
+};
 lib.util.click.call(null, popup.pause, function() {
   if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+    popup.set_timer_state_BANG_.call(null, "paused");
     return popup.timer.stop_BANG_.call(null, popup.time_struct)
   }else {
+    popup.set_timer_state_BANG_.call(null, "runs");
     popup.timer.start_BANG_.call(null, popup.time_struct);
     return popup.update_time.call(null)
   }
@@ -30207,6 +30219,7 @@ lib.util.click.call(null, popup.restart, function() {
   popup.timer.stop_BANG_.call(null, popup.time_struct);
   popup.store_result.call(null);
   popup.timer.create_BANG_.call(null, popup.time_struct);
+  popup.set_timer_state_BANG_.call(null, "runs");
   return popup.update_time.call(null)
 });
 popup.update_time.call(null);

@@ -52,6 +52,15 @@ input[type=radio] {
     cursor: pointer;
 }
 
+.timer-icon {
+  display: none;
+}
+
+.timer-runs .pause,
+.timer-paused .play {
+  display: inline-block;
+}
+
 .timer-links {
     display: block;
     text-align: center;
