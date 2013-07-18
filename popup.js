@@ -30127,6 +30127,9 @@ lib.util.pad = function pad(msg, len, chr) {
     return lib.util.populate_string.call(null, chr, add_len) + base_str
   }
 };
+lib.util.format_date = function format_date(stamp) {
+  return(new Date(stamp)).toString()
+};
 lib.util.format_time = function format_time(time) {
   var stamp = lib.util.div.call(null, time, 1E3);
   var format_recur = function(stamp__$1, times) {
@@ -30139,18 +30142,18 @@ lib.util.format_time = function format_time(time) {
         }
       }else {
         if(cljs.core._EQ_.call(null, cljs.core.count.call(null, times), 2)) {
-          var G__5321 = 0;
-          var G__5322 = cljs.core.conj.call(null, times, stamp__$1);
-          stamp__$1 = G__5321;
-          times = G__5322;
+          var G__12669 = 0;
+          var G__12670 = cljs.core.conj.call(null, times, stamp__$1);
+          stamp__$1 = G__12669;
+          times = G__12670;
           continue
         }else {
           var remainder = lib.util.pad.call(null, cljs.core.mod.call(null, stamp__$1, 60), 2, "0");
           var divided = lib.util.div.call(null, stamp__$1, 60);
-          var G__5323 = divided;
-          var G__5324 = cljs.core.conj.call(null, times, remainder);
-          stamp__$1 = G__5323;
-          times = G__5324;
+          var G__12671 = divided;
+          var G__12672 = cljs.core.conj.call(null, times, remainder);
+          stamp__$1 = G__12671;
+          times = G__12672;
           continue
         }
       }

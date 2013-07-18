@@ -29065,6 +29065,9 @@ lib.util.pad = function pad(msg, len, chr) {
     return lib.util.populate_string.call(null, chr, add_len) + base_str
   }
 };
+lib.util.format_date = function format_date(stamp) {
+  return(new Date(stamp)).toString()
+};
 lib.util.format_time = function format_time(time) {
   var stamp = lib.util.div.call(null, time, 1E3);
   var format_recur = function(stamp__$1, times) {
@@ -29077,18 +29080,18 @@ lib.util.format_time = function format_time(time) {
         }
       }else {
         if(cljs.core._EQ_.call(null, cljs.core.count.call(null, times), 2)) {
-          var G__5549 = 0;
-          var G__5550 = cljs.core.conj.call(null, times, stamp__$1);
-          stamp__$1 = G__5549;
-          times = G__5550;
+          var G__12897 = 0;
+          var G__12898 = cljs.core.conj.call(null, times, stamp__$1);
+          stamp__$1 = G__12897;
+          times = G__12898;
           continue
         }else {
           var remainder = lib.util.pad.call(null, cljs.core.mod.call(null, stamp__$1, 60), 2, "0");
           var divided = lib.util.div.call(null, stamp__$1, 60);
-          var G__5551 = divided;
-          var G__5552 = cljs.core.conj.call(null, times, remainder);
-          stamp__$1 = G__5551;
-          times = G__5552;
+          var G__12899 = divided;
+          var G__12900 = cljs.core.conj.call(null, times, remainder);
+          stamp__$1 = G__12899;
+          times = G__12900;
           continue
         }
       }
@@ -30134,14 +30137,19 @@ lib.localstorage.set_item = function set_item(item, value) {
 };
 goog.provide("options");
 goog.require("cljs.core");
+goog.require("clojure.string");
 goog.require("lib.localstorage");
 goog.require("lib.util");
+goog.require("clojure.string");
+options.round = function round(val) {
+  return Math.round(val)
+};
 options.get_keys = function get_keys() {
   return Object.keys(localStorage)
 };
 options.get_result_keys = function get_result_keys() {
-  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__9257_SHARP_) {
-    return cljs.core.re_find.call(null, /^result_/, p1__9257_SHARP_)
+  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__14484_SHARP_) {
+    return cljs.core.re_find.call(null, /^result_/, p1__14484_SHARP_)
   }, options.get_keys.call(null)))
 };
 options.get_result = function get_result(key) {
@@ -30149,24 +30157,35 @@ options.get_result = function get_result(key) {
 };
 options.get_results = function get_results() {
   var keys = options.get_result_keys.call(null);
-  var results = cljs.core.map.call(null, function(p1__9258_SHARP_) {
-    return cljs.core.assoc.call(null, options.get_result.call(null, p1__9258_SHARP_), "\ufdd0'key", p1__9258_SHARP_)
+  var results = cljs.core.map.call(null, function(p1__14485_SHARP_) {
+    return cljs.core.assoc.call(null, options.get_result.call(null, p1__14485_SHARP_), "\ufdd0'key", p1__14485_SHARP_)
   }, keys);
   return results
 };
+options.get_seconds = function get_seconds(range) {
+  return options.round.call(null, cljs.core.apply.call(null, cljs.core._, range) / -1E3)
+};
 options.generate_result_html = function generate_result_html(result) {
   var node = document.createElement("li");
+  var container = document.createElement("ul");
   node.innerHTML = (new cljs.core.Keyword("\ufdd0'key")).call(null, result);
+  options.populate_html.call(null, container, (new cljs.core.Keyword("\ufdd0'ranges")).call(null, result), options.generate_range_html);
+  node.appendChild(container);
+  return node
+};
+options.generate_range_html = function generate_range_html(range) {
+  var node = document.createElement("li");
+  node.innerHTML = [cljs.core.str(options.get_seconds.call(null, range)), cljs.core.str(" secs: "), cljs.core.str(clojure.string.join.call(null, " - ", cljs.core.map.call(null, lib.util.format_date, range)))].join("");
   return node
 };
 options.populate_html = function populate_html(container, results, render_func) {
-  var G__9260 = cljs.core.seq.call(null, results);
+  var G__14487 = cljs.core.seq.call(null, results);
   while(true) {
-    if(G__9260) {
-      var result = cljs.core.first.call(null, G__9260);
+    if(G__14487) {
+      var result = cljs.core.first.call(null, G__14487);
       container.appendChild(render_func.call(null, result));
-      var G__9261 = cljs.core.next.call(null, G__9260);
-      G__9260 = G__9261;
+      var G__14488 = cljs.core.next.call(null, G__14487);
+      G__14487 = G__14488;
       continue
     }else {
       return null

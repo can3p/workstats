@@ -31,6 +31,9 @@
       (+ (populate-string chr add-len)
          base-str))))
 
+(defn format-date [stamp]
+  (.toString (new js/Date stamp)))
+
 (defn format-time [time]
   (let [
         stamp (div time 1000)

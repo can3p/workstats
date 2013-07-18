@@ -1,7 +1,12 @@
 (ns options
   (:require
+    [clojure.string
+     :refer [join]]
     [lib.util :as util]
     [lib.localstorage :as ls]))
+
+(defn round [val]
+  (js/Math.round val))
 
 (defn get-keys []
   (.keys js/Object js/localStorage))
@@ -22,9 +27,26 @@
                              %1) keys)]
     results))
 
+(defn get-seconds [range]
+  (round (/ (apply - range) -1000)))
+
+(declare populate-html)
+(declare generate-range-html)
+
 (defn generate-result-html [result]
-  (let [node (.createElement js/document "li")]
+  (let [node (.createElement js/document "li")
+        container (.createElement js/document "ul")]
     (set! (.-innerHTML node) (:key result))
+    (populate-html container (:ranges result) generate-range-html)
+    (.appendChild node container)
+    node))
+
+(defn generate-range-html [range]
+  (let [node (.createElement js/document "li")]
+    (set! (.-innerHTML node) (str (get-seconds range)
+                                  " secs: "
+                                  (join " - "
+                                   (map util/format-date range))))
     node))
 
 (defn populate-html [container results render-func]
