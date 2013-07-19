@@ -5,9 +5,14 @@
 
 (defn get-length [timer]
   (let [
-        time (get-current)]
-    (+ (:sum timer)
-       (- time (:last timer)))))
+        time (get-current)
+        sum (if (:sum timer)
+              (:sum timer)
+              0)
+        delta (if (:last timer)
+                (- time (:last timer))
+                0)]
+    (+ sum delta)))
 
 (defn stop [timer]
   (let [{:keys (last ranges sum)} timer

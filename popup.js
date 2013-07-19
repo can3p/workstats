@@ -28864,14 +28864,16 @@ popup.timer.get_current = function get_current() {
 };
 popup.timer.get_length = function get_length(timer) {
   var time = popup.timer.get_current.call(null);
-  return(new cljs.core.Keyword("\ufdd0'sum")).call(null, timer) + (time - (new cljs.core.Keyword("\ufdd0'last")).call(null, timer))
+  var sum = cljs.core.truth_((new cljs.core.Keyword("\ufdd0'sum")).call(null, timer)) ? (new cljs.core.Keyword("\ufdd0'sum")).call(null, timer) : 0;
+  var delta = cljs.core.truth_((new cljs.core.Keyword("\ufdd0'last")).call(null, timer)) ? time - (new cljs.core.Keyword("\ufdd0'last")).call(null, timer) : 0;
+  return sum + delta
 };
 popup.timer.stop = function stop(timer) {
-  var map__5857 = timer;
-  var map__5857__$1 = cljs.core.seq_QMARK_.call(null, map__5857) ? cljs.core.apply.call(null, cljs.core.hash_map, map__5857) : map__5857;
-  var sum = cljs.core._lookup.call(null, map__5857__$1, "\ufdd0'sum", null);
-  var ranges = cljs.core._lookup.call(null, map__5857__$1, "\ufdd0'ranges", null);
-  var last = cljs.core._lookup.call(null, map__5857__$1, "\ufdd0'last", null);
+  var map__22108 = timer;
+  var map__22108__$1 = cljs.core.seq_QMARK_.call(null, map__22108) ? cljs.core.apply.call(null, cljs.core.hash_map, map__22108) : map__22108;
+  var sum = cljs.core._lookup.call(null, map__22108__$1, "\ufdd0'sum", null);
+  var ranges = cljs.core._lookup.call(null, map__22108__$1, "\ufdd0'ranges", null);
+  var last = cljs.core._lookup.call(null, map__22108__$1, "\ufdd0'last", null);
   var time = popup.timer.get_current.call(null);
   return cljs.core.assoc.call(null, timer, "\ufdd0'last", null, "\ufdd0'ranges", cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last, time], true)), "\ufdd0'sum", sum + (time - last))
 };
@@ -30171,6 +30173,9 @@ lib.localstorage.get_item = function get_item(item) {
 lib.localstorage.set_item = function set_item(item, value) {
   return localStorage.setItem(item, cljs.core.pr_str.call(null, value))
 };
+lib.localstorage.remove_item = function remove_item(item) {
+  return localStorage.removeItem(item)
+};
 goog.provide("popup");
 goog.require("cljs.core");
 goog.require("lib.util");
@@ -30193,8 +30198,35 @@ popup.update_time = function update_time() {
     return null
   }
 };
-popup.store_result = function store_result() {
-  return lib.localstorage.set_item.call(null, "result_" + popup.timer.get_current.call(null), cljs.core.deref.call(null, popup.time_struct))
+popup.store_result = function() {
+  var store_result = null;
+  var store_result__0 = function() {
+    return store_result.call(null, [cljs.core.str("result_"), cljs.core.str(popup.timer.get_current.call(null))].join(""))
+  };
+  var store_result__1 = function(key) {
+    return lib.localstorage.set_item.call(null, key, cljs.core.deref.call(null, popup.time_struct))
+  };
+  store_result = function(key) {
+    switch(arguments.length) {
+      case 0:
+        return store_result__0.call(this);
+      case 1:
+        return store_result__1.call(this, key)
+    }
+    throw new Error("Invalid arity: " + arguments.length);
+  };
+  store_result.cljs$lang$arity$0 = store_result__0;
+  store_result.cljs$lang$arity$1 = store_result__1;
+  return store_result
+}();
+popup.restore_result = function restore_result() {
+  var result = lib.localstorage.get_item.call(null, "latest");
+  lib.localstorage.remove_item.call(null, "latest");
+  if(cljs.core.truth_(result)) {
+    return cljs.core.reset_BANG_.call(null, popup.time_struct, result)
+  }else {
+    return null
+  }
 };
 popup.set_timer_state_BANG_ = function set_timer_state_BANG_(state) {
   if(cljs.core._EQ_.call(null, state, "paused")) {
@@ -30222,4 +30254,16 @@ lib.util.click.call(null, popup.restart, function() {
   popup.set_timer_state_BANG_.call(null, "runs");
   return popup.update_time.call(null)
 });
+lib.util.bind_event.call(null, window, "unload", function() {
+  return popup.store_result.call(null, "latest")
+});
+popup.restore_result.call(null);
+if(cljs.core.not.call(null, popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+  popup.set_timer_state_BANG_.call(null, "paused")
+}else {
+}
+if(cljs.core.truth_(popup.time_struct)) {
+  popup.set_time_BANG_.call(null, popup.timer.get_length.call(null, cljs.core.deref.call(null, popup.time_struct)))
+}else {
+}
 popup.update_time.call(null);

@@ -30135,6 +30135,9 @@ lib.localstorage.get_item = function get_item(item) {
 lib.localstorage.set_item = function set_item(item, value) {
   return localStorage.setItem(item, cljs.core.pr_str.call(null, value))
 };
+lib.localstorage.remove_item = function remove_item(item) {
+  return localStorage.removeItem(item)
+};
 goog.provide("options");
 goog.require("cljs.core");
 goog.require("clojure.string");
