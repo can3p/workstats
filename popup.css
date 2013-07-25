@@ -24,6 +24,7 @@ input[type=radio] {
 
 .timer-body {
     font-size: 14px;
+    min-width: 200px;
 }
 
 .timer-current-time {
