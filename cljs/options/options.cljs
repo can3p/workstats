@@ -41,10 +41,16 @@
     (.appendChild node container)
     node))
 
+(defn time-string [time]
+  (let [chunks (util/parse-time time)
+        len (count chunks)
+        labels (take-last len [" days " " hours " " mins " " secs"])]
+    (join (util/join-seqs chunks labels))))
+
 (defn generate-range-html [range]
   (let [node (.createElement js/document "li")]
-    (set! (.-innerHTML node) (str (get-seconds range)
-                                  " secs: "
+    (set! (.-innerHTML node) (str (time-string (* (get-seconds range) 1000))
+                                  " "
                                   (join " - "
                                    (map util/format-date range))))
     node))

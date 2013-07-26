@@ -31,22 +31,29 @@
       (+ (populate-string chr add-len)
          base-str))))
 
+(defn join-seqs [seq1 seq2]
+  (if (empty? seq1)
+    []
+    (concat [(first seq1) (first seq2)]
+          (join-seqs (rest seq1)
+                     (rest seq2)))))
+
 (defn format-date [stamp]
   (.toString (new js/Date stamp)))
 
-(defn format-time [time]
+(defn parse-time [time]
   (let [
         stamp (div time 1000)
         format-recur (fn [stamp, times]
                        (if (= stamp 0)
                          (if (> (count times) 0)
-                           (string/join ":" (reverse times))
-                           "00")
+                           (reverse times)
+                           [0])
                          (if (= (count times) 2)
                            (recur 0
                                   (conj times stamp))
                            (let [
-                                 remainder (pad (mod stamp 60) 2 "0")
+                                 remainder (mod stamp 60)
                                  divided (div stamp 60) ]
                              (recur divided
                                     (conj times remainder))))
@@ -54,3 +61,8 @@
                        )
         ]
     (format-recur stamp [])))
+
+(defn format-time [time delims]
+  (string/join ":" (map
+                     (fn [chunk] (pad (str chunk) 2 "0"))
+                     (parse-time time))))

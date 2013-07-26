@@ -30129,33 +30129,40 @@ lib.util.pad = function pad(msg, len, chr) {
     return lib.util.populate_string.call(null, chr, add_len) + base_str
   }
 };
+lib.util.join_seqs = function join_seqs(seq1, seq2) {
+  if(cljs.core.empty_QMARK_.call(null, seq1)) {
+    return cljs.core.PersistentVector.EMPTY
+  }else {
+    return cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.first.call(null, seq1), cljs.core.first.call(null, seq2)], true), join_seqs.call(null, cljs.core.rest.call(null, seq1), cljs.core.rest.call(null, seq2)))
+  }
+};
 lib.util.format_date = function format_date(stamp) {
   return(new Date(stamp)).toString()
 };
-lib.util.format_time = function format_time(time) {
+lib.util.parse_time = function parse_time(time) {
   var stamp = lib.util.div.call(null, time, 1E3);
   var format_recur = function(stamp__$1, times) {
     while(true) {
       if(cljs.core._EQ_.call(null, stamp__$1, 0)) {
         if(cljs.core.count.call(null, times) > 0) {
-          return clojure.string.join.call(null, ":", cljs.core.reverse.call(null, times))
+          return cljs.core.reverse.call(null, times)
         }else {
-          return"00"
+          return cljs.core.PersistentVector.fromArray([0], true)
         }
       }else {
         if(cljs.core._EQ_.call(null, cljs.core.count.call(null, times), 2)) {
-          var G__12669 = 0;
-          var G__12670 = cljs.core.conj.call(null, times, stamp__$1);
-          stamp__$1 = G__12669;
-          times = G__12670;
+          var G__27061 = 0;
+          var G__27062 = cljs.core.conj.call(null, times, stamp__$1);
+          stamp__$1 = G__27061;
+          times = G__27062;
           continue
         }else {
-          var remainder = lib.util.pad.call(null, cljs.core.mod.call(null, stamp__$1, 60), 2, "0");
+          var remainder = cljs.core.mod.call(null, stamp__$1, 60);
           var divided = lib.util.div.call(null, stamp__$1, 60);
-          var G__12671 = divided;
-          var G__12672 = cljs.core.conj.call(null, times, remainder);
-          stamp__$1 = G__12671;
-          times = G__12672;
+          var G__27063 = divided;
+          var G__27064 = cljs.core.conj.call(null, times, remainder);
+          stamp__$1 = G__27063;
+          times = G__27064;
           continue
         }
       }
@@ -30163,6 +30170,11 @@ lib.util.format_time = function format_time(time) {
     }
   };
   return format_recur.call(null, stamp, cljs.core.PersistentVector.EMPTY)
+};
+lib.util.format_time = function format_time(time, delims) {
+  return clojure.string.join.call(null, ":", cljs.core.map.call(null, function(chunk) {
+    return lib.util.pad.call(null, [cljs.core.str(chunk)].join(""), 2, "0")
+  }, lib.util.parse_time.call(null, time)))
 };
 goog.provide("lib.localstorage");
 goog.require("cljs.core");

@@ -29065,33 +29065,40 @@ lib.util.pad = function pad(msg, len, chr) {
     return lib.util.populate_string.call(null, chr, add_len) + base_str
   }
 };
+lib.util.join_seqs = function join_seqs(seq1, seq2) {
+  if(cljs.core.empty_QMARK_.call(null, seq1)) {
+    return cljs.core.PersistentVector.EMPTY
+  }else {
+    return cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.first.call(null, seq1), cljs.core.first.call(null, seq2)], true), join_seqs.call(null, cljs.core.rest.call(null, seq1), cljs.core.rest.call(null, seq2)))
+  }
+};
 lib.util.format_date = function format_date(stamp) {
   return(new Date(stamp)).toString()
 };
-lib.util.format_time = function format_time(time) {
+lib.util.parse_time = function parse_time(time) {
   var stamp = lib.util.div.call(null, time, 1E3);
   var format_recur = function(stamp__$1, times) {
     while(true) {
       if(cljs.core._EQ_.call(null, stamp__$1, 0)) {
         if(cljs.core.count.call(null, times) > 0) {
-          return clojure.string.join.call(null, ":", cljs.core.reverse.call(null, times))
+          return cljs.core.reverse.call(null, times)
         }else {
-          return"00"
+          return cljs.core.PersistentVector.fromArray([0], true)
         }
       }else {
         if(cljs.core._EQ_.call(null, cljs.core.count.call(null, times), 2)) {
-          var G__12897 = 0;
-          var G__12898 = cljs.core.conj.call(null, times, stamp__$1);
-          stamp__$1 = G__12897;
-          times = G__12898;
+          var G__27289 = 0;
+          var G__27290 = cljs.core.conj.call(null, times, stamp__$1);
+          stamp__$1 = G__27289;
+          times = G__27290;
           continue
         }else {
-          var remainder = lib.util.pad.call(null, cljs.core.mod.call(null, stamp__$1, 60), 2, "0");
+          var remainder = cljs.core.mod.call(null, stamp__$1, 60);
           var divided = lib.util.div.call(null, stamp__$1, 60);
-          var G__12899 = divided;
-          var G__12900 = cljs.core.conj.call(null, times, remainder);
-          stamp__$1 = G__12899;
-          times = G__12900;
+          var G__27291 = divided;
+          var G__27292 = cljs.core.conj.call(null, times, remainder);
+          stamp__$1 = G__27291;
+          times = G__27292;
           continue
         }
       }
@@ -29099,6 +29106,11 @@ lib.util.format_time = function format_time(time) {
     }
   };
   return format_recur.call(null, stamp, cljs.core.PersistentVector.EMPTY)
+};
+lib.util.format_time = function format_time(time, delims) {
+  return clojure.string.join.call(null, ":", cljs.core.map.call(null, function(chunk) {
+    return lib.util.pad.call(null, [cljs.core.str(chunk)].join(""), 2, "0")
+  }, lib.util.parse_time.call(null, time)))
 };
 goog.provide("cljs.reader");
 goog.require("cljs.core");
@@ -30151,8 +30163,8 @@ options.get_keys = function get_keys() {
   return Object.keys(localStorage)
 };
 options.get_result_keys = function get_result_keys() {
-  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__14484_SHARP_) {
-    return cljs.core.re_find.call(null, /^result_/, p1__14484_SHARP_)
+  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__28189_SHARP_) {
+    return cljs.core.re_find.call(null, /^result_/, p1__28189_SHARP_)
   }, options.get_keys.call(null)))
 };
 options.get_result = function get_result(key) {
@@ -30160,8 +30172,8 @@ options.get_result = function get_result(key) {
 };
 options.get_results = function get_results() {
   var keys = options.get_result_keys.call(null);
-  var results = cljs.core.map.call(null, function(p1__14485_SHARP_) {
-    return cljs.core.assoc.call(null, options.get_result.call(null, p1__14485_SHARP_), "\ufdd0'key", p1__14485_SHARP_)
+  var results = cljs.core.map.call(null, function(p1__28190_SHARP_) {
+    return cljs.core.assoc.call(null, options.get_result.call(null, p1__28190_SHARP_), "\ufdd0'key", p1__28190_SHARP_)
   }, keys);
   return results
 };
@@ -30176,19 +30188,25 @@ options.generate_result_html = function generate_result_html(result) {
   node.appendChild(container);
   return node
 };
+options.time_string = function time_string(time) {
+  var chunks = lib.util.parse_time.call(null, time);
+  var len = cljs.core.count.call(null, chunks);
+  var labels = cljs.core.take_last.call(null, len, cljs.core.PersistentVector.fromArray([" days ", " hours ", " mins ", " secs"], true));
+  return clojure.string.join.call(null, lib.util.join_seqs.call(null, chunks, labels))
+};
 options.generate_range_html = function generate_range_html(range) {
   var node = document.createElement("li");
-  node.innerHTML = [cljs.core.str(options.get_seconds.call(null, range)), cljs.core.str(" secs: "), cljs.core.str(clojure.string.join.call(null, " - ", cljs.core.map.call(null, lib.util.format_date, range)))].join("");
+  node.innerHTML = [cljs.core.str(options.time_string.call(null, options.get_seconds.call(null, range) * 1E3)), cljs.core.str(" "), cljs.core.str(clojure.string.join.call(null, " - ", cljs.core.map.call(null, lib.util.format_date, range)))].join("");
   return node
 };
 options.populate_html = function populate_html(container, results, render_func) {
-  var G__14487 = cljs.core.seq.call(null, results);
+  var G__28192 = cljs.core.seq.call(null, results);
   while(true) {
-    if(G__14487) {
-      var result = cljs.core.first.call(null, G__14487);
+    if(G__28192) {
+      var result = cljs.core.first.call(null, G__28192);
       container.appendChild(render_func.call(null, result));
-      var G__14488 = cljs.core.next.call(null, G__14487);
-      G__14487 = G__14488;
+      var G__28193 = cljs.core.next.call(null, G__28192);
+      G__28192 = G__28193;
       continue
     }else {
       return null
