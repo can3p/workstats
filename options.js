@@ -30163,8 +30163,8 @@ options.get_keys = function get_keys() {
   return Object.keys(localStorage)
 };
 options.get_result_keys = function get_result_keys() {
-  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__28189_SHARP_) {
-    return cljs.core.re_find.call(null, /^result_/, p1__28189_SHARP_)
+  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__29069_SHARP_) {
+    return cljs.core.re_find.call(null, /^result_/, p1__29069_SHARP_)
   }, options.get_keys.call(null)))
 };
 options.get_result = function get_result(key) {
@@ -30172,8 +30172,8 @@ options.get_result = function get_result(key) {
 };
 options.get_results = function get_results() {
   var keys = options.get_result_keys.call(null);
-  var results = cljs.core.map.call(null, function(p1__28190_SHARP_) {
-    return cljs.core.assoc.call(null, options.get_result.call(null, p1__28190_SHARP_), "\ufdd0'key", p1__28190_SHARP_)
+  var results = cljs.core.map.call(null, function(p1__29070_SHARP_) {
+    return cljs.core.assoc.call(null, options.get_result.call(null, p1__29070_SHARP_), "\ufdd0'key", p1__29070_SHARP_)
   }, keys);
   return results
 };
@@ -30200,13 +30200,13 @@ options.generate_range_html = function generate_range_html(range) {
   return node
 };
 options.populate_html = function populate_html(container, results, render_func) {
-  var G__28192 = cljs.core.seq.call(null, results);
+  var G__29072 = cljs.core.seq.call(null, results);
   while(true) {
-    if(G__28192) {
-      var result = cljs.core.first.call(null, G__28192);
+    if(G__29072) {
+      var result = cljs.core.first.call(null, G__29072);
       container.appendChild(render_func.call(null, result));
-      var G__28193 = cljs.core.next.call(null, G__28192);
-      G__28192 = G__28193;
+      var G__29073 = cljs.core.next.call(null, G__29072);
+      G__29072 = G__29073;
       continue
     }else {
       return null
