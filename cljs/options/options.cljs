@@ -38,16 +38,11 @@
     (new js/Chronoline node
          (clj->js [
                   {
-                   :dates [(new js/Date 2012 3 9 14 15) (new js/Date 2012 3 9 19)]
+                   :dates (map (fn [range]
+                                 (map #(new js/Date %1) range))
+                               (:ranges result))
                    :title "Coding"
-                   }
-                   {
-                    :dates [(new js/Date 2012 3 9 14 15) (new js/Date 2012 3 9 19)]
-                    :title "Meetings"
-                    :attrs {
-                            :fill "#ff9e44"
-                            :stroke "#ff9e44" }
-                    }])
+                   } ])
          (clj->js {
                    :animated true
                    :visibleSpan 86400000
