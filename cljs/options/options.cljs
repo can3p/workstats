@@ -32,26 +32,38 @@
 
 (declare populate-html)
 
+(defn reset-date [d]
+            (let [new_d (new js/Date d)]
+              (do
+                (.setHours new_d 8)
+                (.setMinutes new_d 0)
+                (.setSeconds new_d 0))
+              new_d))
+
 (defn generate-result-html [result container]
   (let [node (.createElement js/document "li")]
     (.appendChild container node)
-    (new js/Chronoline node
-         (clj->js [
-                  {
-                   :dates (map (fn [range]
-                                 (map #(new js/Date %1) range))
-                               (:ranges result))
-                   :title "Coding"
-                   } ])
-         (clj->js {
-                   :animated true
-                   :visibleSpan 86400000
-                   :subLabel "day"
-                   :subSubLabel "yearmonth"
-                   :floatingSubLabels false
-                   :defaultStartDate (new js/Date 2012 3 9)
-                   }))
-    node))
+    (let [
+          dates (map (fn [range]
+                       {
+                        :dates (map #(new js/Date %1) range)
+                        :title "Coding"
+                        })
+                      (:ranges result))]
+      (new js/Chronoline node
+           (clj->js dates)
+           (clj->js {
+                     :animated true
+                     :visibleSpan 86400000
+                     :subLabel "day"
+                     :subSubLabel "yearmonth"
+                     :floatingSubLabels false
+                     :defaultStartDate (reset-date
+                                         (first
+                                           (:dates
+                                             (first dates))))
+                     }))
+    node)))
 
 (defn time-string [time]
   (let [chunks (util/parse-time time)

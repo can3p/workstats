@@ -30163,8 +30163,8 @@ options.get_keys = function get_keys() {
   return Object.keys(localStorage)
 };
 options.get_result_keys = function get_result_keys() {
-  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__35450_SHARP_) {
-    return cljs.core.re_find.call(null, /^result_/, p1__35450_SHARP_)
+  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__41318_SHARP_) {
+    return cljs.core.re_find.call(null, /^result_/, p1__41318_SHARP_)
   }, options.get_keys.call(null)))
 };
 options.get_result = function get_result(key) {
@@ -30172,22 +30172,31 @@ options.get_result = function get_result(key) {
 };
 options.get_results = function get_results() {
   var keys = options.get_result_keys.call(null);
-  var results = cljs.core.map.call(null, function(p1__35451_SHARP_) {
-    return cljs.core.assoc.call(null, options.get_result.call(null, p1__35451_SHARP_), "\ufdd0'key", p1__35451_SHARP_)
+  var results = cljs.core.map.call(null, function(p1__41319_SHARP_) {
+    return cljs.core.assoc.call(null, options.get_result.call(null, p1__41319_SHARP_), "\ufdd0'key", p1__41319_SHARP_)
   }, keys);
   return results
 };
 options.get_seconds = function get_seconds(range) {
   return options.round.call(null, cljs.core.apply.call(null, cljs.core._, range) / -1E3)
 };
+options.reset_date = function reset_date(d) {
+  var new_d = new Date(d);
+  new_d.setHours(8);
+  new_d.setMinutes(0);
+  new_d.setSeconds(0);
+  return new_d
+};
 options.generate_result_html = function generate_result_html(result, container) {
   var node = document.createElement("li");
   container.appendChild(node);
-  new Chronoline(node, cljs.core.clj__GT_js.call(null, cljs.core.PersistentVector.fromArray([cljs.core.ObjMap.fromObject(["\ufdd0'dates", "\ufdd0'title"], {"\ufdd0'dates":cljs.core.map.call(null, function(range) {
-    return cljs.core.map.call(null, function(p1__35452_SHARP_) {
-      return new Date(p1__35452_SHARP_)
-    }, range)
-  }, (new cljs.core.Keyword("\ufdd0'ranges")).call(null, result)), "\ufdd0'title":"Coding"})], true)), cljs.core.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'animated", "\ufdd0'visibleSpan", "\ufdd0'subLabel", "\ufdd0'subSubLabel", "\ufdd0'floatingSubLabels", "\ufdd0'defaultStartDate"], {"\ufdd0'animated":true, "\ufdd0'visibleSpan":864E5, "\ufdd0'subLabel":"day", "\ufdd0'subSubLabel":"yearmonth", "\ufdd0'floatingSubLabels":false, "\ufdd0'defaultStartDate":new Date(2012, 3, 9)})));
+  var dates = cljs.core.map.call(null, function(range) {
+    return cljs.core.ObjMap.fromObject(["\ufdd0'dates", "\ufdd0'title"], {"\ufdd0'dates":cljs.core.map.call(null, function(p1__41320_SHARP_) {
+      return new Date(p1__41320_SHARP_)
+    }, range), "\ufdd0'title":"Coding"})
+  }, (new cljs.core.Keyword("\ufdd0'ranges")).call(null, result));
+  new Chronoline(node, cljs.core.clj__GT_js.call(null, dates), cljs.core.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'animated", "\ufdd0'visibleSpan", "\ufdd0'subLabel", "\ufdd0'subSubLabel", "\ufdd0'floatingSubLabels", "\ufdd0'defaultStartDate"], {"\ufdd0'animated":true, "\ufdd0'visibleSpan":864E5, "\ufdd0'subLabel":"day", "\ufdd0'subSubLabel":"yearmonth", "\ufdd0'floatingSubLabels":false, "\ufdd0'defaultStartDate":options.reset_date.call(null, cljs.core.first.call(null, (new cljs.core.Keyword("\ufdd0'dates")).call(null, 
+  cljs.core.first.call(null, dates))))})));
   return node
 };
 options.time_string = function time_string(time) {
@@ -30197,13 +30206,13 @@ options.time_string = function time_string(time) {
   return clojure.string.join.call(null, lib.util.join_seqs.call(null, chunks, labels))
 };
 options.populate_html = function populate_html(container, results, render_func) {
-  var G__35454 = cljs.core.seq.call(null, results);
+  var G__41322 = cljs.core.seq.call(null, results);
   while(true) {
-    if(G__35454) {
-      var result = cljs.core.first.call(null, G__35454);
+    if(G__41322) {
+      var result = cljs.core.first.call(null, G__41322);
       render_func.call(null, result, container);
-      var G__35455 = cljs.core.next.call(null, G__35454);
-      G__35454 = G__35455;
+      var G__41323 = cljs.core.next.call(null, G__41322);
+      G__41322 = G__41323;
       continue
     }else {
       return null
