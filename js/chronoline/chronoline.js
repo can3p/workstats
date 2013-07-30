@@ -29,17 +29,17 @@ function formatDate(date, formatString){
     // note that this also doesn't escape things properly. sorry
     var ret = formatString;
     if(formatString.indexOf('%d') != -1){
-        var dateNum = date.getUTCDate().toString();
+        var dateNum = date.getDate().toString();
         if(dateNum.length < 2)
             dateNum = '0' + dateNum;
         ret = ret.replace('%d', dateNum);
     }
     if(formatString.indexOf('%b') != -1){
-        var month = monthNames[date.getUTCMonth()].substring(0, 3);
+        var month = monthNames[date.getMonth()].substring(0, 3);
         ret = ret.replace('%b', month);
     }
     if(formatString.indexOf('%Y') != -1){
-        ret = ret.replace('%Y', date.getUTCFullYear());
+        ret = ret.replace('%Y', date.getFullYear());
     }
 
     return ret;
@@ -55,35 +55,35 @@ function getEndDate(dateArray){
 }
 
 function isFifthDay(date){
-    var day = date.getUTCDate();
+    var day = date.getDate();
     return (day == 1 || day % 5 == 0) && day != 30;
 }
 
 function isHalfMonth(date){
-    var day = date.getUTCDate();
+    var day = date.getDate();
     return day == 1 || day == 15;
 }
 
 function prevMonth(date){
     var newDate = new Date(date.getTime() - DAY_IN_MILLISECONDS);
-    return new Date(Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth(), 1));
+    return new Date(Date.UTC(newDate.getFullYear(), newDate.getMonth(), 1));
 }
 
 function nextMonth(date){
     var newDate = new Date(date.getTime() + DAY_IN_MILLISECONDS);
-    return new Date(Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth() + 1, 1));
+    return new Date(Date.UTC(newDate.getFullYear(), newDate.getMonth() + 1, 1));
 }
 
 function prevQuarter(date){
     var newDate = new Date(date - DAY_IN_MILLISECONDS);
     var month = newDate.getMonth();
-    return new Date(Date.UTC(newDate.getUTCFullYear(), month - month % 3, 1));
+    return new Date(Date.UTC(newDate.getFullYear(), month - month % 3, 1));
 }
 
 function nextQuarter(date){
     var newDate = new Date(date.getTime() + DAY_IN_MILLISECONDS);
-    var month = newDate.getUTCMonth();
-    return new Date(Date.UTC(newDate.getUTCFullYear(), month - month % 3 + 3, 1));
+    var month = newDate.getMonth();
+    return new Date(Date.UTC(newDate.getFullYear(), month - month % 3 + 3, 1));
 }
 
 function backWeek(date){
@@ -483,17 +483,10 @@ function Chronoline(domElement, events, options) {
 
 
     t.drawLabelsHelper = function(startMs, endMs){
-        var date = new Date(startMs);
-        if (date.getHours() > 0) {
-          date.setHours(0);
-          date.setDate(date.getDate() + 1);
-          startMs = date.getTime();
-        }
-
         //add more resolution to the chronoline
         for(var curMs = startMs; curMs < endMs; curMs += DAY_IN_MILLISECONDS / 12){
             var curDate = new Date(curMs);
-            var day = curDate.getUTCDate();
+            var day = curDate.getDate();
             var hour = curDate.getHours();
             var x = t.msToPx(curMs);
 
@@ -542,7 +535,7 @@ function Chronoline(domElement, events, options) {
                 if(t.floatingSubLabels){
                     // bounds determine how far things can float
                     subLabel.data('left-bound', x);
-                    var endOfMonth = new Date(Date.UTC(curDate.getUTCFullYear(), curDate.getUTCMonth() + 1, 0));
+                    var endOfMonth = new Date(Date.UTC(curDate.getFullYear(), curDate.getMonth() + 1, 0));
                     subLabel.data('right-bound',
                                   Math.min((endOfMonth.getTime() - t.startTime) * t.pxRatio - 5,
                                            t.totalWidth));
@@ -557,7 +550,7 @@ function Chronoline(domElement, events, options) {
               if(t.floatingSubLabels){
                   // bounds determine how far things can float
                   subLabel.data('left-bound', x);
-                  var endOfMonth = new Date(Date.UTC(curDate.getUTCFullYear(), curDate.getUTCMonth() + 1, 0));
+                  var endOfMonth = new Date(Date.UTC(curDate.getFullYear(), curDate.getMonth() + 1, 0));
                   subLabel.data('right-bound',
                                 Math.min((endOfMonth.getTime() - t.startTime) * t.pxRatio - 5,
                                          t.totalWidth));
