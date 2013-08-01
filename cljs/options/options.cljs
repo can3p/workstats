@@ -40,30 +40,33 @@
                 (.setSeconds new_d 0))
               new_d))
 
+(defn setup-chronoline! [node ranges]
+  (let [
+        dates (map (fn [range]
+                     {
+                      :dates (map #(new js/Date %1) range)
+                      :title "Coding"
+                      })
+                    ranges)]
+    (new js/Chronoline node
+         (clj->js dates)
+         (clj->js {
+                   :animated true
+                   :visibleSpan 86400000
+                   :subLabel "day"
+                   :subSubLabel "yearmonth"
+                   :floatingSubLabels false
+                   :defaultStartDate (reset-date
+                                       (first
+                                         (:dates
+                                           (first dates))))
+                   }))))
+
 (defn generate-result-html [result container]
   (let [node (.createElement js/document "li")]
     (.appendChild container node)
-    (let [
-          dates (map (fn [range]
-                       {
-                        :dates (map #(new js/Date %1) range)
-                        :title "Coding"
-                        })
-                      (:ranges result))]
-      (new js/Chronoline node
-           (clj->js dates)
-           (clj->js {
-                     :animated true
-                     :visibleSpan 86400000
-                     :subLabel "day"
-                     :subSubLabel "yearmonth"
-                     :floatingSubLabels false
-                     :defaultStartDate (reset-date
-                                         (first
-                                           (:dates
-                                             (first dates))))
-                     }))
-    node)))
+    (setup-chronoline! node (:ranges result))
+    node))
 
 (defn time-string [time]
   (let [chunks (util/parse-time time)
