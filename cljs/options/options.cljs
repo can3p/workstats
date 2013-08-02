@@ -1,7 +1,9 @@
 (ns options
+  (:use-macros [dommy.macros :only [deftemplate]])
   (:require
     [clojure.string
      :refer [join]]
+    [dommy.core :as dommy]
     [lib.util :as util]
     [lib.results
      :refer [get-results]]))
@@ -45,19 +47,16 @@
         labels (take-last len [" days " " hours " " mins " " secs"])]
     (join (util/join-seqs chunks labels))))
 
+(deftemplate result-html [time]
+             [:li [:div] [:p (str "Total work time: " time)]])
+
 (defn generate-result-html [result container]
   (let [
-        node (.createElement js/document "li")
-        graph (.createElement js/document "div")
-        description (.createElement js/document "p")
-        ]
-    (.appendChild container node)
-    (.appendChild node graph)
-    (.appendChild node description)
-    (set! (.-innerHTML description)
-          (str "Total work time: "
-               (time-string (:sum result))))
+        time (time-string (:sum result))
+        node (result-html time)
+        graph (.querySelector node "div")]
 
+    (.appendChild container node)
     (setup-chronoline! graph (:ranges result))
     node))
 
