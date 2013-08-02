@@ -30163,8 +30163,8 @@ options.get_keys = function get_keys() {
   return Object.keys(localStorage)
 };
 options.get_result_keys = function get_result_keys() {
-  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__42239_SHARP_) {
-    return cljs.core.re_find.call(null, /^result_/, p1__42239_SHARP_)
+  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__43353_SHARP_) {
+    return cljs.core.re_find.call(null, /^result_/, p1__43353_SHARP_)
   }, options.get_keys.call(null)))
 };
 options.get_result = function get_result(key) {
@@ -30172,8 +30172,8 @@ options.get_result = function get_result(key) {
 };
 options.get_results = function get_results() {
   var keys = options.get_result_keys.call(null);
-  var results = cljs.core.map.call(null, function(p1__42240_SHARP_) {
-    return cljs.core.assoc.call(null, options.get_result.call(null, p1__42240_SHARP_), "\ufdd0'key", p1__42240_SHARP_)
+  var results = cljs.core.map.call(null, function(p1__43354_SHARP_) {
+    return cljs.core.assoc.call(null, options.get_result.call(null, p1__43354_SHARP_), "\ufdd0'key", p1__43354_SHARP_)
   }, keys);
   return results
 };
@@ -30189,18 +30189,12 @@ options.reset_date = function reset_date(d) {
 };
 options.setup_chronoline_BANG_ = function setup_chronoline_BANG_(node, ranges) {
   var dates = cljs.core.map.call(null, function(range) {
-    return cljs.core.ObjMap.fromObject(["\ufdd0'dates", "\ufdd0'title"], {"\ufdd0'dates":cljs.core.map.call(null, function(p1__42241_SHARP_) {
-      return new Date(p1__42241_SHARP_)
+    return cljs.core.ObjMap.fromObject(["\ufdd0'dates", "\ufdd0'title"], {"\ufdd0'dates":cljs.core.map.call(null, function(p1__43355_SHARP_) {
+      return new Date(p1__43355_SHARP_)
     }, range), "\ufdd0'title":"Coding"})
   }, ranges);
   return new Chronoline(node, cljs.core.clj__GT_js.call(null, dates), cljs.core.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'animated", "\ufdd0'visibleSpan", "\ufdd0'subLabel", "\ufdd0'subSubLabel", "\ufdd0'floatingSubLabels", "\ufdd0'defaultStartDate"], {"\ufdd0'animated":true, "\ufdd0'visibleSpan":864E5, "\ufdd0'subLabel":"day", "\ufdd0'subSubLabel":"yearmonth", "\ufdd0'floatingSubLabels":false, "\ufdd0'defaultStartDate":options.reset_date.call(null, cljs.core.first.call(null, (new cljs.core.Keyword("\ufdd0'dates")).call(null, 
   cljs.core.first.call(null, dates))))})))
-};
-options.generate_result_html = function generate_result_html(result, container) {
-  var node = document.createElement("li");
-  container.appendChild(node);
-  options.setup_chronoline_BANG_.call(null, node, (new cljs.core.Keyword("\ufdd0'ranges")).call(null, result));
-  return node
 };
 options.time_string = function time_string(time) {
   var chunks = lib.util.parse_time.call(null, time);
@@ -30208,14 +30202,25 @@ options.time_string = function time_string(time) {
   var labels = cljs.core.take_last.call(null, len, cljs.core.PersistentVector.fromArray([" days ", " hours ", " mins ", " secs"], true));
   return clojure.string.join.call(null, lib.util.join_seqs.call(null, chunks, labels))
 };
+options.generate_result_html = function generate_result_html(result, container) {
+  var node = document.createElement("li");
+  var graph = document.createElement("div");
+  var description = document.createElement("p");
+  container.appendChild(node);
+  node.appendChild(graph);
+  node.appendChild(description);
+  description.innerHTML = [cljs.core.str("Total work time: "), cljs.core.str(options.time_string.call(null, (new cljs.core.Keyword("\ufdd0'sum")).call(null, result)))].join("");
+  options.setup_chronoline_BANG_.call(null, graph, (new cljs.core.Keyword("\ufdd0'ranges")).call(null, result));
+  return node
+};
 options.populate_html = function populate_html(container, results, render_func) {
-  var G__42243 = cljs.core.seq.call(null, results);
+  var G__43357 = cljs.core.seq.call(null, results);
   while(true) {
-    if(G__42243) {
-      var result = cljs.core.first.call(null, G__42243);
+    if(G__43357) {
+      var result = cljs.core.first.call(null, G__43357);
       render_func.call(null, result, container);
-      var G__42244 = cljs.core.next.call(null, G__42243);
-      G__42243 = G__42244;
+      var G__43358 = cljs.core.next.call(null, G__43357);
+      G__43357 = G__43358;
       continue
     }else {
       return null

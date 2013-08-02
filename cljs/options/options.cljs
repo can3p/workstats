@@ -62,17 +62,27 @@
                                            (first dates))))
                    }))))
 
-(defn generate-result-html [result container]
-  (let [node (.createElement js/document "li")]
-    (.appendChild container node)
-    (setup-chronoline! node (:ranges result))
-    node))
-
 (defn time-string [time]
   (let [chunks (util/parse-time time)
         len (count chunks)
         labels (take-last len [" days " " hours " " mins " " secs"])]
     (join (util/join-seqs chunks labels))))
+
+(defn generate-result-html [result container]
+  (let [
+        node (.createElement js/document "li")
+        graph (.createElement js/document "div")
+        description (.createElement js/document "p")
+        ]
+    (.appendChild container node)
+    (.appendChild node graph)
+    (.appendChild node description)
+    (set! (.-innerHTML description)
+          (str "Total work time: "
+               (time-string (:sum result))))
+
+    (setup-chronoline! graph (:ranges result))
+    node))
 
 (defn populate-html [container results render-func]
   (doseq [result results]
