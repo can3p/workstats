@@ -28857,261 +28857,6 @@ goog.provide("debug");
 goog.require("cljs.core");
 goog.require("clojure.browser.repl");
 clojure.browser.repl.connect.call(null, "http://localhost:9000/repl");
-goog.provide("clojure.string");
-goog.require("cljs.core");
-goog.require("goog.string.StringBuffer");
-goog.require("goog.string");
-clojure.string.seq_reverse = function seq_reverse(coll) {
-  return cljs.core.reduce.call(null, cljs.core.conj, cljs.core.List.EMPTY, coll)
-};
-clojure.string.reverse = function reverse(s) {
-  return s.split("").reverse().join("")
-};
-clojure.string.replace = function replace(s, match, replacement) {
-  if(cljs.core.string_QMARK_.call(null, match)) {
-    return s.replace(new RegExp(goog.string.regExpEscape(match), "g"), replacement)
-  }else {
-    if(cljs.core.truth_(match.hasOwnProperty("source"))) {
-      return s.replace(new RegExp(match.source, "g"), replacement)
-    }else {
-      if("\ufdd0'else") {
-        throw[cljs.core.str("Invalid match arg: "), cljs.core.str(match)].join("");
-      }else {
-        return null
-      }
-    }
-  }
-};
-clojure.string.replace_first = function replace_first(s, match, replacement) {
-  return s.replace(match, replacement)
-};
-clojure.string.join = function() {
-  var join = null;
-  var join__1 = function(coll) {
-    return cljs.core.apply.call(null, cljs.core.str, coll)
-  };
-  var join__2 = function(separator, coll) {
-    return cljs.core.apply.call(null, cljs.core.str, cljs.core.interpose.call(null, separator, coll))
-  };
-  join = function(separator, coll) {
-    switch(arguments.length) {
-      case 1:
-        return join__1.call(this, separator);
-      case 2:
-        return join__2.call(this, separator, coll)
-    }
-    throw new Error("Invalid arity: " + arguments.length);
-  };
-  join.cljs$lang$arity$1 = join__1;
-  join.cljs$lang$arity$2 = join__2;
-  return join
-}();
-clojure.string.upper_case = function upper_case(s) {
-  return s.toUpperCase()
-};
-clojure.string.lower_case = function lower_case(s) {
-  return s.toLowerCase()
-};
-clojure.string.capitalize = function capitalize(s) {
-  if(cljs.core.count.call(null, s) < 2) {
-    return clojure.string.upper_case.call(null, s)
-  }else {
-    return[cljs.core.str(clojure.string.upper_case.call(null, cljs.core.subs.call(null, s, 0, 1))), cljs.core.str(clojure.string.lower_case.call(null, cljs.core.subs.call(null, s, 1)))].join("")
-  }
-};
-clojure.string.split = function() {
-  var split = null;
-  var split__2 = function(s, re) {
-    return cljs.core.vec.call(null, [cljs.core.str(s)].join("").split(re))
-  };
-  var split__3 = function(s, re, limit) {
-    if(limit < 1) {
-      return cljs.core.vec.call(null, [cljs.core.str(s)].join("").split(re))
-    }else {
-      var s__$1 = s;
-      var limit__$1 = limit;
-      var parts = cljs.core.PersistentVector.EMPTY;
-      while(true) {
-        if(cljs.core._EQ_.call(null, limit__$1, 1)) {
-          return cljs.core.conj.call(null, parts, s__$1)
-        }else {
-          var temp__4090__auto__ = cljs.core.re_find.call(null, re, s__$1);
-          if(cljs.core.truth_(temp__4090__auto__)) {
-            var m = temp__4090__auto__;
-            var index = s__$1.indexOf(m);
-            var G__5571 = s__$1.substring(index + cljs.core.count.call(null, m));
-            var G__5572 = limit__$1 - 1;
-            var G__5573 = cljs.core.conj.call(null, parts, s__$1.substring(0, index));
-            s__$1 = G__5571;
-            limit__$1 = G__5572;
-            parts = G__5573;
-            continue
-          }else {
-            return cljs.core.conj.call(null, parts, s__$1)
-          }
-        }
-        break
-      }
-    }
-  };
-  split = function(s, re, limit) {
-    switch(arguments.length) {
-      case 2:
-        return split__2.call(this, s, re);
-      case 3:
-        return split__3.call(this, s, re, limit)
-    }
-    throw new Error("Invalid arity: " + arguments.length);
-  };
-  split.cljs$lang$arity$2 = split__2;
-  split.cljs$lang$arity$3 = split__3;
-  return split
-}();
-clojure.string.split_lines = function split_lines(s) {
-  return clojure.string.split.call(null, s, /\n|\r\n/)
-};
-clojure.string.trim = function trim(s) {
-  return goog.string.trim(s)
-};
-clojure.string.triml = function triml(s) {
-  return goog.string.trimLeft(s)
-};
-clojure.string.trimr = function trimr(s) {
-  return goog.string.trimRight(s)
-};
-clojure.string.trim_newline = function trim_newline(s) {
-  var index = s.length;
-  while(true) {
-    if(index === 0) {
-      return""
-    }else {
-      var ch = cljs.core._lookup.call(null, s, index - 1, null);
-      if(function() {
-        var or__3943__auto__ = cljs.core._EQ_.call(null, ch, "\n");
-        if(or__3943__auto__) {
-          return or__3943__auto__
-        }else {
-          return cljs.core._EQ_.call(null, ch, "\r")
-        }
-      }()) {
-        var G__5574 = index - 1;
-        index = G__5574;
-        continue
-      }else {
-        return s.substring(0, index)
-      }
-    }
-    break
-  }
-};
-clojure.string.blank_QMARK_ = function blank_QMARK_(s) {
-  return goog.string.isEmptySafe(s)
-};
-clojure.string.escape = function escape(s, cmap) {
-  var buffer = new goog.string.StringBuffer;
-  var length = s.length;
-  var index = 0;
-  while(true) {
-    if(cljs.core._EQ_.call(null, length, index)) {
-      return buffer.toString()
-    }else {
-      var ch = s.charAt(index);
-      var temp__4090__auto___5575 = cljs.core._lookup.call(null, cmap, ch, null);
-      if(cljs.core.truth_(temp__4090__auto___5575)) {
-        var replacement_5576 = temp__4090__auto___5575;
-        buffer.append([cljs.core.str(replacement_5576)].join(""))
-      }else {
-        buffer.append(ch)
-      }
-      var G__5577 = index + 1;
-      index = G__5577;
-      continue
-    }
-    break
-  }
-};
-goog.provide("lib.util");
-goog.require("cljs.core");
-goog.require("clojure.string");
-lib.util.$ = function $(selector) {
-  return document.querySelector(selector)
-};
-lib.util.bind_event = function bind_event(element, event, handle) {
-  return element.addEventListener(event, handle, false)
-};
-lib.util.click = function click(element, handle) {
-  return lib.util.bind_event.call(null, element, "click", handle)
-};
-lib.util.div = function div(number, divider) {
-  var modulo = cljs.core.mod.call(null, number, divider);
-  return(number - modulo) / divider
-};
-lib.util.log = function log(msg) {
-  return console.log(msg)
-};
-lib.util.populate_string = function populate_string(chr, len) {
-  if(cljs.core._EQ_.call(null, len, 0)) {
-    return""
-  }else {
-    return chr + populate_string.call(null, chr, len - 1)
-  }
-};
-lib.util.pad = function pad(msg, len, chr) {
-  var base_str = msg.toString();
-  var add_len = len - cljs.core.count.call(null, base_str);
-  if(add_len < 0) {
-    return base_str
-  }else {
-    return lib.util.populate_string.call(null, chr, add_len) + base_str
-  }
-};
-lib.util.join_seqs = function join_seqs(seq1, seq2) {
-  if(cljs.core.empty_QMARK_.call(null, seq1)) {
-    return cljs.core.PersistentVector.EMPTY
-  }else {
-    return cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.first.call(null, seq1), cljs.core.first.call(null, seq2)], true), join_seqs.call(null, cljs.core.rest.call(null, seq1), cljs.core.rest.call(null, seq2)))
-  }
-};
-lib.util.format_date = function format_date(stamp) {
-  return(new Date(stamp)).toString()
-};
-lib.util.parse_time = function parse_time(time) {
-  var stamp = lib.util.div.call(null, time, 1E3);
-  var format_recur = function(stamp__$1, times) {
-    while(true) {
-      if(cljs.core._EQ_.call(null, stamp__$1, 0)) {
-        if(cljs.core.count.call(null, times) > 0) {
-          return cljs.core.reverse.call(null, times)
-        }else {
-          return cljs.core.PersistentVector.fromArray([0], true)
-        }
-      }else {
-        if(cljs.core._EQ_.call(null, cljs.core.count.call(null, times), 2)) {
-          var G__27289 = 0;
-          var G__27290 = cljs.core.conj.call(null, times, stamp__$1);
-          stamp__$1 = G__27289;
-          times = G__27290;
-          continue
-        }else {
-          var remainder = cljs.core.mod.call(null, stamp__$1, 60);
-          var divided = lib.util.div.call(null, stamp__$1, 60);
-          var G__27291 = divided;
-          var G__27292 = cljs.core.conj.call(null, times, remainder);
-          stamp__$1 = G__27291;
-          times = G__27292;
-          continue
-        }
-      }
-      break
-    }
-  };
-  return format_recur.call(null, stamp, cljs.core.PersistentVector.EMPTY)
-};
-lib.util.format_time = function format_time(time, delims) {
-  return clojure.string.join.call(null, ":", cljs.core.map.call(null, function(chunk) {
-    return lib.util.pad.call(null, [cljs.core.str(chunk)].join(""), 2, "0")
-  }, lib.util.parse_time.call(null, time)))
-};
 goog.provide("cljs.reader");
 goog.require("cljs.core");
 goog.require("goog.string");
@@ -30138,6 +29883,261 @@ cljs.reader.deregister_tag_parser_BANG_ = function deregister_tag_parser_BANG_(t
   cljs.core.swap_BANG_.call(null, cljs.reader._STAR_tag_table_STAR_, cljs.core.dissoc, tag__$1);
   return old_parser
 };
+goog.provide("clojure.string");
+goog.require("cljs.core");
+goog.require("goog.string.StringBuffer");
+goog.require("goog.string");
+clojure.string.seq_reverse = function seq_reverse(coll) {
+  return cljs.core.reduce.call(null, cljs.core.conj, cljs.core.List.EMPTY, coll)
+};
+clojure.string.reverse = function reverse(s) {
+  return s.split("").reverse().join("")
+};
+clojure.string.replace = function replace(s, match, replacement) {
+  if(cljs.core.string_QMARK_.call(null, match)) {
+    return s.replace(new RegExp(goog.string.regExpEscape(match), "g"), replacement)
+  }else {
+    if(cljs.core.truth_(match.hasOwnProperty("source"))) {
+      return s.replace(new RegExp(match.source, "g"), replacement)
+    }else {
+      if("\ufdd0'else") {
+        throw[cljs.core.str("Invalid match arg: "), cljs.core.str(match)].join("");
+      }else {
+        return null
+      }
+    }
+  }
+};
+clojure.string.replace_first = function replace_first(s, match, replacement) {
+  return s.replace(match, replacement)
+};
+clojure.string.join = function() {
+  var join = null;
+  var join__1 = function(coll) {
+    return cljs.core.apply.call(null, cljs.core.str, coll)
+  };
+  var join__2 = function(separator, coll) {
+    return cljs.core.apply.call(null, cljs.core.str, cljs.core.interpose.call(null, separator, coll))
+  };
+  join = function(separator, coll) {
+    switch(arguments.length) {
+      case 1:
+        return join__1.call(this, separator);
+      case 2:
+        return join__2.call(this, separator, coll)
+    }
+    throw new Error("Invalid arity: " + arguments.length);
+  };
+  join.cljs$lang$arity$1 = join__1;
+  join.cljs$lang$arity$2 = join__2;
+  return join
+}();
+clojure.string.upper_case = function upper_case(s) {
+  return s.toUpperCase()
+};
+clojure.string.lower_case = function lower_case(s) {
+  return s.toLowerCase()
+};
+clojure.string.capitalize = function capitalize(s) {
+  if(cljs.core.count.call(null, s) < 2) {
+    return clojure.string.upper_case.call(null, s)
+  }else {
+    return[cljs.core.str(clojure.string.upper_case.call(null, cljs.core.subs.call(null, s, 0, 1))), cljs.core.str(clojure.string.lower_case.call(null, cljs.core.subs.call(null, s, 1)))].join("")
+  }
+};
+clojure.string.split = function() {
+  var split = null;
+  var split__2 = function(s, re) {
+    return cljs.core.vec.call(null, [cljs.core.str(s)].join("").split(re))
+  };
+  var split__3 = function(s, re, limit) {
+    if(limit < 1) {
+      return cljs.core.vec.call(null, [cljs.core.str(s)].join("").split(re))
+    }else {
+      var s__$1 = s;
+      var limit__$1 = limit;
+      var parts = cljs.core.PersistentVector.EMPTY;
+      while(true) {
+        if(cljs.core._EQ_.call(null, limit__$1, 1)) {
+          return cljs.core.conj.call(null, parts, s__$1)
+        }else {
+          var temp__4090__auto__ = cljs.core.re_find.call(null, re, s__$1);
+          if(cljs.core.truth_(temp__4090__auto__)) {
+            var m = temp__4090__auto__;
+            var index = s__$1.indexOf(m);
+            var G__5571 = s__$1.substring(index + cljs.core.count.call(null, m));
+            var G__5572 = limit__$1 - 1;
+            var G__5573 = cljs.core.conj.call(null, parts, s__$1.substring(0, index));
+            s__$1 = G__5571;
+            limit__$1 = G__5572;
+            parts = G__5573;
+            continue
+          }else {
+            return cljs.core.conj.call(null, parts, s__$1)
+          }
+        }
+        break
+      }
+    }
+  };
+  split = function(s, re, limit) {
+    switch(arguments.length) {
+      case 2:
+        return split__2.call(this, s, re);
+      case 3:
+        return split__3.call(this, s, re, limit)
+    }
+    throw new Error("Invalid arity: " + arguments.length);
+  };
+  split.cljs$lang$arity$2 = split__2;
+  split.cljs$lang$arity$3 = split__3;
+  return split
+}();
+clojure.string.split_lines = function split_lines(s) {
+  return clojure.string.split.call(null, s, /\n|\r\n/)
+};
+clojure.string.trim = function trim(s) {
+  return goog.string.trim(s)
+};
+clojure.string.triml = function triml(s) {
+  return goog.string.trimLeft(s)
+};
+clojure.string.trimr = function trimr(s) {
+  return goog.string.trimRight(s)
+};
+clojure.string.trim_newline = function trim_newline(s) {
+  var index = s.length;
+  while(true) {
+    if(index === 0) {
+      return""
+    }else {
+      var ch = cljs.core._lookup.call(null, s, index - 1, null);
+      if(function() {
+        var or__3943__auto__ = cljs.core._EQ_.call(null, ch, "\n");
+        if(or__3943__auto__) {
+          return or__3943__auto__
+        }else {
+          return cljs.core._EQ_.call(null, ch, "\r")
+        }
+      }()) {
+        var G__5574 = index - 1;
+        index = G__5574;
+        continue
+      }else {
+        return s.substring(0, index)
+      }
+    }
+    break
+  }
+};
+clojure.string.blank_QMARK_ = function blank_QMARK_(s) {
+  return goog.string.isEmptySafe(s)
+};
+clojure.string.escape = function escape(s, cmap) {
+  var buffer = new goog.string.StringBuffer;
+  var length = s.length;
+  var index = 0;
+  while(true) {
+    if(cljs.core._EQ_.call(null, length, index)) {
+      return buffer.toString()
+    }else {
+      var ch = s.charAt(index);
+      var temp__4090__auto___5575 = cljs.core._lookup.call(null, cmap, ch, null);
+      if(cljs.core.truth_(temp__4090__auto___5575)) {
+        var replacement_5576 = temp__4090__auto___5575;
+        buffer.append([cljs.core.str(replacement_5576)].join(""))
+      }else {
+        buffer.append(ch)
+      }
+      var G__5577 = index + 1;
+      index = G__5577;
+      continue
+    }
+    break
+  }
+};
+goog.provide("lib.util");
+goog.require("cljs.core");
+goog.require("clojure.string");
+lib.util.$ = function $(selector) {
+  return document.querySelector(selector)
+};
+lib.util.bind_event = function bind_event(element, event, handle) {
+  return element.addEventListener(event, handle, false)
+};
+lib.util.click = function click(element, handle) {
+  return lib.util.bind_event.call(null, element, "click", handle)
+};
+lib.util.div = function div(number, divider) {
+  var modulo = cljs.core.mod.call(null, number, divider);
+  return(number - modulo) / divider
+};
+lib.util.log = function log(msg) {
+  return console.log(msg)
+};
+lib.util.populate_string = function populate_string(chr, len) {
+  if(cljs.core._EQ_.call(null, len, 0)) {
+    return""
+  }else {
+    return chr + populate_string.call(null, chr, len - 1)
+  }
+};
+lib.util.pad = function pad(msg, len, chr) {
+  var base_str = msg.toString();
+  var add_len = len - cljs.core.count.call(null, base_str);
+  if(add_len < 0) {
+    return base_str
+  }else {
+    return lib.util.populate_string.call(null, chr, add_len) + base_str
+  }
+};
+lib.util.join_seqs = function join_seqs(seq1, seq2) {
+  if(cljs.core.empty_QMARK_.call(null, seq1)) {
+    return cljs.core.PersistentVector.EMPTY
+  }else {
+    return cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.first.call(null, seq1), cljs.core.first.call(null, seq2)], true), join_seqs.call(null, cljs.core.rest.call(null, seq1), cljs.core.rest.call(null, seq2)))
+  }
+};
+lib.util.format_date = function format_date(stamp) {
+  return(new Date(stamp)).toString()
+};
+lib.util.parse_time = function parse_time(time) {
+  var stamp = lib.util.div.call(null, time, 1E3);
+  var format_recur = function(stamp__$1, times) {
+    while(true) {
+      if(cljs.core._EQ_.call(null, stamp__$1, 0)) {
+        if(cljs.core.count.call(null, times) > 0) {
+          return cljs.core.reverse.call(null, times)
+        }else {
+          return cljs.core.PersistentVector.fromArray([0], true)
+        }
+      }else {
+        if(cljs.core._EQ_.call(null, cljs.core.count.call(null, times), 2)) {
+          var G__27289 = 0;
+          var G__27290 = cljs.core.conj.call(null, times, stamp__$1);
+          stamp__$1 = G__27289;
+          times = G__27290;
+          continue
+        }else {
+          var remainder = cljs.core.mod.call(null, stamp__$1, 60);
+          var divided = lib.util.div.call(null, stamp__$1, 60);
+          var G__27291 = divided;
+          var G__27292 = cljs.core.conj.call(null, times, remainder);
+          stamp__$1 = G__27291;
+          times = G__27292;
+          continue
+        }
+      }
+      break
+    }
+  };
+  return format_recur.call(null, stamp, cljs.core.PersistentVector.EMPTY)
+};
+lib.util.format_time = function format_time(time, delims) {
+  return clojure.string.join.call(null, ":", cljs.core.map.call(null, function(chunk) {
+    return lib.util.pad.call(null, [cljs.core.str(chunk)].join(""), 2, "0")
+  }, lib.util.parse_time.call(null, time)))
+};
 goog.provide("lib.localstorage");
 goog.require("cljs.core");
 goog.require("cljs.reader");
@@ -30150,35 +30150,101 @@ lib.localstorage.set_item = function set_item(item, value) {
 lib.localstorage.remove_item = function remove_item(item) {
   return localStorage.removeItem(item)
 };
+goog.provide("lib.timer");
+goog.require("cljs.core");
+lib.timer.get_current = function get_current() {
+  return(new Date).getTime()
+};
+lib.timer.get_length = function get_length(timer) {
+  var time = lib.timer.get_current.call(null);
+  var sum = cljs.core.truth_((new cljs.core.Keyword("\ufdd0'sum")).call(null, timer)) ? (new cljs.core.Keyword("\ufdd0'sum")).call(null, timer) : 0;
+  var delta = cljs.core.truth_((new cljs.core.Keyword("\ufdd0'last")).call(null, timer)) ? time - (new cljs.core.Keyword("\ufdd0'last")).call(null, timer) : 0;
+  return sum + delta
+};
+lib.timer.stop = function stop(timer) {
+  var map__4740 = timer;
+  var map__4740__$1 = cljs.core.seq_QMARK_.call(null, map__4740) ? cljs.core.apply.call(null, cljs.core.hash_map, map__4740) : map__4740;
+  var sum = cljs.core._lookup.call(null, map__4740__$1, "\ufdd0'sum", null);
+  var ranges = cljs.core._lookup.call(null, map__4740__$1, "\ufdd0'ranges", null);
+  var last = cljs.core._lookup.call(null, map__4740__$1, "\ufdd0'last", null);
+  var time = lib.timer.get_current.call(null);
+  return cljs.core.assoc.call(null, timer, "\ufdd0'last", null, "\ufdd0'ranges", cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last, time], true)), "\ufdd0'sum", sum + (time - last))
+};
+lib.timer.start = function start(timer) {
+  return cljs.core.assoc.call(null, timer, "\ufdd0'last", lib.timer.get_current.call(null))
+};
+lib.timer.create = function create() {
+  return cljs.core.ObjMap.fromObject(["\ufdd0'last", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last":lib.timer.get_current.call(null), "\ufdd0'ranges":cljs.core.PersistentVector.EMPTY, "\ufdd0'sum":0})
+};
+lib.timer.started_QMARK_ = function started_QMARK_(timer) {
+  return cljs.core.not_EQ_.call(null, null, (new cljs.core.Keyword("\ufdd0'last")).call(null, timer))
+};
+lib.timer.start_BANG_ = function start_BANG_(timer) {
+  return cljs.core.swap_BANG_.call(null, timer, lib.timer.start)
+};
+lib.timer.stop_BANG_ = function stop_BANG_(timer) {
+  return cljs.core.swap_BANG_.call(null, timer, lib.timer.stop)
+};
+lib.timer.create_BANG_ = function create_BANG_(timer) {
+  return cljs.core.reset_BANG_.call(null, timer, lib.timer.create.call(null))
+};
+goog.provide("lib.results");
+goog.require("cljs.core");
+goog.require("lib.localstorage");
+goog.require("lib.timer");
+lib.results.get_keys = function get_keys() {
+  return Object.keys(localStorage)
+};
+lib.results.get_result_keys = function get_result_keys() {
+  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__4067_SHARP_) {
+    return cljs.core.re_find.call(null, /^result_/, p1__4067_SHARP_)
+  }, lib.results.get_keys.call(null)))
+};
+lib.results.get_result = function get_result(key) {
+  return lib.localstorage.get_item.call(null, key)
+};
+lib.results.get_results = function get_results() {
+  var keys = lib.results.get_result_keys.call(null);
+  var results = cljs.core.map.call(null, function(p1__4068_SHARP_) {
+    return cljs.core.assoc.call(null, lib.results.get_result.call(null, p1__4068_SHARP_), "\ufdd0'key", p1__4068_SHARP_)
+  }, keys);
+  return results
+};
+lib.results.store_result_BANG_ = function() {
+  var store_result_BANG_ = null;
+  var store_result_BANG___1 = function(struct) {
+    return store_result_BANG_.call(null, struct, [cljs.core.str("result_"), cljs.core.str(lib.timer.get_current.call(null))].join(""))
+  };
+  var store_result_BANG___2 = function(struct, key) {
+    return lib.localstorage.set_item.call(null, key, cljs.core.deref.call(null, struct))
+  };
+  store_result_BANG_ = function(struct, key) {
+    switch(arguments.length) {
+      case 1:
+        return store_result_BANG___1.call(this, struct);
+      case 2:
+        return store_result_BANG___2.call(this, struct, key)
+    }
+    throw new Error("Invalid arity: " + arguments.length);
+  };
+  store_result_BANG_.cljs$lang$arity$1 = store_result_BANG___1;
+  store_result_BANG_.cljs$lang$arity$2 = store_result_BANG___2;
+  return store_result_BANG_
+}();
+lib.results.get_latest_BANG_ = function get_latest_BANG_() {
+  var result = lib.localstorage.get_item.call(null, "latest");
+  lib.localstorage.remove_item.call(null, "latest");
+  return result
+};
 goog.provide("options");
 goog.require("cljs.core");
 goog.require("clojure.string");
-goog.require("lib.localstorage");
+goog.require("lib.results");
+goog.require("lib.results");
 goog.require("lib.util");
 goog.require("clojure.string");
 options.round = function round(val) {
   return Math.round(val)
-};
-options.get_keys = function get_keys() {
-  return Object.keys(localStorage)
-};
-options.get_result_keys = function get_result_keys() {
-  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__43353_SHARP_) {
-    return cljs.core.re_find.call(null, /^result_/, p1__43353_SHARP_)
-  }, options.get_keys.call(null)))
-};
-options.get_result = function get_result(key) {
-  return lib.localstorage.get_item.call(null, key)
-};
-options.get_results = function get_results() {
-  var keys = options.get_result_keys.call(null);
-  var results = cljs.core.map.call(null, function(p1__43354_SHARP_) {
-    return cljs.core.assoc.call(null, options.get_result.call(null, p1__43354_SHARP_), "\ufdd0'key", p1__43354_SHARP_)
-  }, keys);
-  return results
-};
-options.get_seconds = function get_seconds(range) {
-  return options.round.call(null, cljs.core.apply.call(null, cljs.core._, range) / -1E3)
 };
 options.reset_date = function reset_date(d) {
   var new_d = new Date(d);
@@ -30189,8 +30255,8 @@ options.reset_date = function reset_date(d) {
 };
 options.setup_chronoline_BANG_ = function setup_chronoline_BANG_(node, ranges) {
   var dates = cljs.core.map.call(null, function(range) {
-    return cljs.core.ObjMap.fromObject(["\ufdd0'dates", "\ufdd0'title"], {"\ufdd0'dates":cljs.core.map.call(null, function(p1__43355_SHARP_) {
-      return new Date(p1__43355_SHARP_)
+    return cljs.core.ObjMap.fromObject(["\ufdd0'dates", "\ufdd0'title"], {"\ufdd0'dates":cljs.core.map.call(null, function(p1__4506_SHARP_) {
+      return new Date(p1__4506_SHARP_)
     }, range), "\ufdd0'title":"Coding"})
   }, ranges);
   return new Chronoline(node, cljs.core.clj__GT_js.call(null, dates), cljs.core.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'animated", "\ufdd0'visibleSpan", "\ufdd0'subLabel", "\ufdd0'subSubLabel", "\ufdd0'floatingSubLabels", "\ufdd0'defaultStartDate"], {"\ufdd0'animated":true, "\ufdd0'visibleSpan":864E5, "\ufdd0'subLabel":"day", "\ufdd0'subSubLabel":"yearmonth", "\ufdd0'floatingSubLabels":false, "\ufdd0'defaultStartDate":options.reset_date.call(null, cljs.core.first.call(null, (new cljs.core.Keyword("\ufdd0'dates")).call(null, 
@@ -30214,13 +30280,13 @@ options.generate_result_html = function generate_result_html(result, container) 
   return node
 };
 options.populate_html = function populate_html(container, results, render_func) {
-  var G__43357 = cljs.core.seq.call(null, results);
+  var G__4508 = cljs.core.seq.call(null, results);
   while(true) {
-    if(G__43357) {
-      var result = cljs.core.first.call(null, G__43357);
+    if(G__4508) {
+      var result = cljs.core.first.call(null, G__4508);
       render_func.call(null, result, container);
-      var G__43358 = cljs.core.next.call(null, G__43357);
-      G__43357 = G__43358;
+      var G__4509 = cljs.core.next.call(null, G__4508);
+      G__4508 = G__4509;
       continue
     }else {
       return null
@@ -30228,6 +30294,6 @@ options.populate_html = function populate_html(container, results, render_func) 
     break
   }
 };
-options.results = options.get_results.call(null);
+options.results = lib.results.get_results.call(null);
 options.container = lib.util.$.call(null, "#results");
 options.populate_html.call(null, options.container, options.results, options.generate_result_html);

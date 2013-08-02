@@ -3,34 +3,11 @@
     [clojure.string
      :refer [join]]
     [lib.util :as util]
-    [lib.localstorage :as ls]))
+    [lib.results
+     :refer [get-results]]))
 
 (defn round [val]
   (js/Math.round val))
-
-(defn get-keys []
-  (.keys js/Object js/localStorage))
-
-(defn get-result-keys []
-  (sort >
-        (filter #(re-find #"^result_" %1)
-                (get-keys))))
-
-(defn get-result [key]
-  (ls/get-item key))
-
-(defn get-results []
-  (let [
-        keys (get-result-keys)
-        results (map #(assoc (get-result %1)
-                             :key
-                             %1) keys)]
-    results))
-
-(defn get-seconds [range]
-  (round (/ (apply - range) -1000)))
-
-(declare populate-html)
 
 (defn reset-date [d]
             (let [new_d (new js/Date d)]

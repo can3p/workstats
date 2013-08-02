@@ -1,7 +1,8 @@
 (ns popup
   (:require 
-    [lib.localstorage :as ls]
-    [popup.timer :as timer]
+    [lib.timer :as timer]
+    [lib.results
+     :refer [store-result! get-latest!]]
     [lib.util :as util]))
 
 (def timer-node (util/$ ".timer-current-time"))
@@ -20,16 +21,8 @@
     (set-time! (timer/get-length @time-struct))
     (js/setTimeout update-time 1000)))
 
-(defn store-result
-  ([] (store-result (str "result_" (timer/get-current))))
-  ([key]
-   (ls/set-item
-     key
-     @time-struct)))
-
 (defn restore-result []
-  (let [result (ls/get-item "latest")]
-    (ls/remove-item "latest")
+  (let [result (get-latest!)]
     (when result
       (reset! time-struct result))))
 
@@ -53,13 +46,13 @@
 
 (util/click restart (fn []
                       (timer/stop! time-struct)
-                      (store-result)
+                      (store-result! time-struct)
                       (timer/create! time-struct)
                       (set-timer-state! "runs")
                       (update-time)))
 
 (util/bind-event js/window "unload" (fn []
-                                      (store-result "latest")))
+                                      (store-result! time-struct "latest")))
 
 (restore-result)
 

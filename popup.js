@@ -28857,44 +28857,6 @@ goog.provide("debug");
 goog.require("cljs.core");
 goog.require("clojure.browser.repl");
 clojure.browser.repl.connect.call(null, "http://localhost:9000/repl");
-goog.provide("popup.timer");
-goog.require("cljs.core");
-popup.timer.get_current = function get_current() {
-  return(new Date).getTime()
-};
-popup.timer.get_length = function get_length(timer) {
-  var time = popup.timer.get_current.call(null);
-  var sum = cljs.core.truth_((new cljs.core.Keyword("\ufdd0'sum")).call(null, timer)) ? (new cljs.core.Keyword("\ufdd0'sum")).call(null, timer) : 0;
-  var delta = cljs.core.truth_((new cljs.core.Keyword("\ufdd0'last")).call(null, timer)) ? time - (new cljs.core.Keyword("\ufdd0'last")).call(null, timer) : 0;
-  return sum + delta
-};
-popup.timer.stop = function stop(timer) {
-  var map__22108 = timer;
-  var map__22108__$1 = cljs.core.seq_QMARK_.call(null, map__22108) ? cljs.core.apply.call(null, cljs.core.hash_map, map__22108) : map__22108;
-  var sum = cljs.core._lookup.call(null, map__22108__$1, "\ufdd0'sum", null);
-  var ranges = cljs.core._lookup.call(null, map__22108__$1, "\ufdd0'ranges", null);
-  var last = cljs.core._lookup.call(null, map__22108__$1, "\ufdd0'last", null);
-  var time = popup.timer.get_current.call(null);
-  return cljs.core.assoc.call(null, timer, "\ufdd0'last", null, "\ufdd0'ranges", cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last, time], true)), "\ufdd0'sum", sum + (time - last))
-};
-popup.timer.start = function start(timer) {
-  return cljs.core.assoc.call(null, timer, "\ufdd0'last", popup.timer.get_current.call(null))
-};
-popup.timer.create = function create() {
-  return cljs.core.ObjMap.fromObject(["\ufdd0'last", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last":popup.timer.get_current.call(null), "\ufdd0'ranges":cljs.core.PersistentVector.EMPTY, "\ufdd0'sum":0})
-};
-popup.timer.started_QMARK_ = function started_QMARK_(timer) {
-  return cljs.core.not_EQ_.call(null, null, (new cljs.core.Keyword("\ufdd0'last")).call(null, timer))
-};
-popup.timer.start_BANG_ = function start_BANG_(timer) {
-  return cljs.core.swap_BANG_.call(null, timer, popup.timer.start)
-};
-popup.timer.stop_BANG_ = function stop_BANG_(timer) {
-  return cljs.core.swap_BANG_.call(null, timer, popup.timer.stop)
-};
-popup.timer.create_BANG_ = function create_BANG_(timer) {
-  return cljs.core.reset_BANG_.call(null, timer, popup.timer.create.call(null))
-};
 goog.provide("cljs.reader");
 goog.require("cljs.core");
 goog.require("goog.string");
@@ -30188,52 +30150,117 @@ lib.localstorage.set_item = function set_item(item, value) {
 lib.localstorage.remove_item = function remove_item(item) {
   return localStorage.removeItem(item)
 };
+goog.provide("lib.timer");
+goog.require("cljs.core");
+lib.timer.get_current = function get_current() {
+  return(new Date).getTime()
+};
+lib.timer.get_length = function get_length(timer) {
+  var time = lib.timer.get_current.call(null);
+  var sum = cljs.core.truth_((new cljs.core.Keyword("\ufdd0'sum")).call(null, timer)) ? (new cljs.core.Keyword("\ufdd0'sum")).call(null, timer) : 0;
+  var delta = cljs.core.truth_((new cljs.core.Keyword("\ufdd0'last")).call(null, timer)) ? time - (new cljs.core.Keyword("\ufdd0'last")).call(null, timer) : 0;
+  return sum + delta
+};
+lib.timer.stop = function stop(timer) {
+  var map__4514 = timer;
+  var map__4514__$1 = cljs.core.seq_QMARK_.call(null, map__4514) ? cljs.core.apply.call(null, cljs.core.hash_map, map__4514) : map__4514;
+  var sum = cljs.core._lookup.call(null, map__4514__$1, "\ufdd0'sum", null);
+  var ranges = cljs.core._lookup.call(null, map__4514__$1, "\ufdd0'ranges", null);
+  var last = cljs.core._lookup.call(null, map__4514__$1, "\ufdd0'last", null);
+  var time = lib.timer.get_current.call(null);
+  return cljs.core.assoc.call(null, timer, "\ufdd0'last", null, "\ufdd0'ranges", cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last, time], true)), "\ufdd0'sum", sum + (time - last))
+};
+lib.timer.start = function start(timer) {
+  return cljs.core.assoc.call(null, timer, "\ufdd0'last", lib.timer.get_current.call(null))
+};
+lib.timer.create = function create() {
+  return cljs.core.ObjMap.fromObject(["\ufdd0'last", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last":lib.timer.get_current.call(null), "\ufdd0'ranges":cljs.core.PersistentVector.EMPTY, "\ufdd0'sum":0})
+};
+lib.timer.started_QMARK_ = function started_QMARK_(timer) {
+  return cljs.core.not_EQ_.call(null, null, (new cljs.core.Keyword("\ufdd0'last")).call(null, timer))
+};
+lib.timer.start_BANG_ = function start_BANG_(timer) {
+  return cljs.core.swap_BANG_.call(null, timer, lib.timer.start)
+};
+lib.timer.stop_BANG_ = function stop_BANG_(timer) {
+  return cljs.core.swap_BANG_.call(null, timer, lib.timer.stop)
+};
+lib.timer.create_BANG_ = function create_BANG_(timer) {
+  return cljs.core.reset_BANG_.call(null, timer, lib.timer.create.call(null))
+};
+goog.provide("lib.results");
+goog.require("cljs.core");
+goog.require("lib.localstorage");
+goog.require("lib.timer");
+lib.results.get_keys = function get_keys() {
+  return Object.keys(localStorage)
+};
+lib.results.get_result_keys = function get_result_keys() {
+  return cljs.core.sort.call(null, cljs.core._GT_, cljs.core.filter.call(null, function(p1__3841_SHARP_) {
+    return cljs.core.re_find.call(null, /^result_/, p1__3841_SHARP_)
+  }, lib.results.get_keys.call(null)))
+};
+lib.results.get_result = function get_result(key) {
+  return lib.localstorage.get_item.call(null, key)
+};
+lib.results.get_results = function get_results() {
+  var keys = lib.results.get_result_keys.call(null);
+  var results = cljs.core.map.call(null, function(p1__3842_SHARP_) {
+    return cljs.core.assoc.call(null, lib.results.get_result.call(null, p1__3842_SHARP_), "\ufdd0'key", p1__3842_SHARP_)
+  }, keys);
+  return results
+};
+lib.results.store_result_BANG_ = function() {
+  var store_result_BANG_ = null;
+  var store_result_BANG___1 = function(struct) {
+    return store_result_BANG_.call(null, struct, [cljs.core.str("result_"), cljs.core.str(lib.timer.get_current.call(null))].join(""))
+  };
+  var store_result_BANG___2 = function(struct, key) {
+    return lib.localstorage.set_item.call(null, key, cljs.core.deref.call(null, struct))
+  };
+  store_result_BANG_ = function(struct, key) {
+    switch(arguments.length) {
+      case 1:
+        return store_result_BANG___1.call(this, struct);
+      case 2:
+        return store_result_BANG___2.call(this, struct, key)
+    }
+    throw new Error("Invalid arity: " + arguments.length);
+  };
+  store_result_BANG_.cljs$lang$arity$1 = store_result_BANG___1;
+  store_result_BANG_.cljs$lang$arity$2 = store_result_BANG___2;
+  return store_result_BANG_
+}();
+lib.results.get_latest_BANG_ = function get_latest_BANG_() {
+  var result = lib.localstorage.get_item.call(null, "latest");
+  lib.localstorage.remove_item.call(null, "latest");
+  return result
+};
 goog.provide("popup");
 goog.require("cljs.core");
+goog.require("lib.results");
 goog.require("lib.util");
-goog.require("popup.timer");
-goog.require("lib.localstorage");
+goog.require("lib.results");
+goog.require("lib.timer");
 popup.timer_node = lib.util.$.call(null, ".timer-current-time");
 popup.body = lib.util.$.call(null, ".timer-body");
 popup.pause = lib.util.$.call(null, ".timer-pause");
 popup.restart = lib.util.$.call(null, ".timer-reset");
-popup.time_struct = cljs.core.atom.call(null, popup.timer.create.call(null));
+popup.time_struct = cljs.core.atom.call(null, lib.timer.create.call(null));
 popup.set_time_BANG_ = function set_time_BANG_(time) {
   var time_str = lib.util.format_time.call(null, time);
   return popup.timer_node.innerHTML = time_str
 };
 popup.update_time = function update_time() {
-  if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
-    popup.set_time_BANG_.call(null, popup.timer.get_length.call(null, cljs.core.deref.call(null, popup.time_struct)));
+  if(cljs.core.truth_(lib.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+    popup.set_time_BANG_.call(null, lib.timer.get_length.call(null, cljs.core.deref.call(null, popup.time_struct)));
     return setTimeout(update_time, 1E3)
   }else {
     return null
   }
 };
-popup.store_result = function() {
-  var store_result = null;
-  var store_result__0 = function() {
-    return store_result.call(null, [cljs.core.str("result_"), cljs.core.str(popup.timer.get_current.call(null))].join(""))
-  };
-  var store_result__1 = function(key) {
-    return lib.localstorage.set_item.call(null, key, cljs.core.deref.call(null, popup.time_struct))
-  };
-  store_result = function(key) {
-    switch(arguments.length) {
-      case 0:
-        return store_result__0.call(this);
-      case 1:
-        return store_result__1.call(this, key)
-    }
-    throw new Error("Invalid arity: " + arguments.length);
-  };
-  store_result.cljs$lang$arity$0 = store_result__0;
-  store_result.cljs$lang$arity$1 = store_result__1;
-  return store_result
-}();
 popup.restore_result = function restore_result() {
-  var result = lib.localstorage.get_item.call(null, "latest");
-  lib.localstorage.remove_item.call(null, "latest");
+  var result = lib.results.get_latest_BANG_.call(null);
   if(cljs.core.truth_(result)) {
     return cljs.core.reset_BANG_.call(null, popup.time_struct, result)
   }else {
@@ -30250,32 +30277,32 @@ popup.set_timer_state_BANG_ = function set_timer_state_BANG_(state) {
   }
 };
 lib.util.click.call(null, popup.pause, function() {
-  if(cljs.core.truth_(popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+  if(cljs.core.truth_(lib.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
     popup.set_timer_state_BANG_.call(null, "paused");
-    return popup.timer.stop_BANG_.call(null, popup.time_struct)
+    return lib.timer.stop_BANG_.call(null, popup.time_struct)
   }else {
     popup.set_timer_state_BANG_.call(null, "runs");
-    popup.timer.start_BANG_.call(null, popup.time_struct);
+    lib.timer.start_BANG_.call(null, popup.time_struct);
     return popup.update_time.call(null)
   }
 });
 lib.util.click.call(null, popup.restart, function() {
-  popup.timer.stop_BANG_.call(null, popup.time_struct);
-  popup.store_result.call(null);
-  popup.timer.create_BANG_.call(null, popup.time_struct);
+  lib.timer.stop_BANG_.call(null, popup.time_struct);
+  lib.results.store_result_BANG_.call(null, popup.time_struct);
+  lib.timer.create_BANG_.call(null, popup.time_struct);
   popup.set_timer_state_BANG_.call(null, "runs");
   return popup.update_time.call(null)
 });
 lib.util.bind_event.call(null, window, "unload", function() {
-  return popup.store_result.call(null, "latest")
+  return lib.results.store_result_BANG_.call(null, popup.time_struct, "latest")
 });
 popup.restore_result.call(null);
-if(cljs.core.not.call(null, popup.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
+if(cljs.core.not.call(null, lib.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
   popup.set_timer_state_BANG_.call(null, "paused")
 }else {
 }
 if(cljs.core.truth_(popup.time_struct)) {
-  popup.set_time_BANG_.call(null, popup.timer.get_length.call(null, cljs.core.deref.call(null, popup.time_struct)))
+  popup.set_time_BANG_.call(null, lib.timer.get_length.call(null, cljs.core.deref.call(null, popup.time_struct)))
 }else {
 }
 popup.update_time.call(null);
