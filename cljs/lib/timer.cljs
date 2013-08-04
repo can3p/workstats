@@ -17,14 +17,18 @@
 (defn stop [timer]
   (let [{:keys (last ranges sum)} timer
         time (get-current)]
-    (assoc timer
-           :last nil
-           :ranges (conj ranges [last time])
-           :sum (+ sum (- time last)))))
+    (if-not (started? timer)
+      timer
+      (assoc timer
+             :last nil
+             :ranges (conj ranges [last time])
+             :sum (+ sum (- time last))))))
 
 (defn start [timer]
-  (assoc timer
-         :last (get-current)))
+  (if (started? timer)
+    timer
+    (assoc timer
+           :last (get-current))))
 
 (defn create []
   {

@@ -30738,16 +30738,24 @@ lib.timer.get_length = function get_length(timer) {
   return sum + delta
 };
 lib.timer.stop = function stop(timer) {
-  var map__4740 = timer;
-  var map__4740__$1 = cljs.core.seq_QMARK_.call(null, map__4740) ? cljs.core.apply.call(null, cljs.core.hash_map, map__4740) : map__4740;
-  var sum = cljs.core._lookup.call(null, map__4740__$1, "\ufdd0'sum", null);
-  var ranges = cljs.core._lookup.call(null, map__4740__$1, "\ufdd0'ranges", null);
-  var last = cljs.core._lookup.call(null, map__4740__$1, "\ufdd0'last", null);
+  var map__10644 = timer;
+  var map__10644__$1 = cljs.core.seq_QMARK_.call(null, map__10644) ? cljs.core.apply.call(null, cljs.core.hash_map, map__10644) : map__10644;
+  var sum = cljs.core._lookup.call(null, map__10644__$1, "\ufdd0'sum", null);
+  var ranges = cljs.core._lookup.call(null, map__10644__$1, "\ufdd0'ranges", null);
+  var last = cljs.core._lookup.call(null, map__10644__$1, "\ufdd0'last", null);
   var time = lib.timer.get_current.call(null);
-  return cljs.core.assoc.call(null, timer, "\ufdd0'last", null, "\ufdd0'ranges", cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last, time], true)), "\ufdd0'sum", sum + (time - last))
+  if(cljs.core.not.call(null, lib.timer.started_QMARK_.call(null, timer))) {
+    return timer
+  }else {
+    return cljs.core.assoc.call(null, timer, "\ufdd0'last", null, "\ufdd0'ranges", cljs.core.conj.call(null, ranges, cljs.core.PersistentVector.fromArray([last, time], true)), "\ufdd0'sum", sum + (time - last))
+  }
 };
 lib.timer.start = function start(timer) {
-  return cljs.core.assoc.call(null, timer, "\ufdd0'last", lib.timer.get_current.call(null))
+  if(cljs.core.truth_(lib.timer.started_QMARK_.call(null, timer))) {
+    return timer
+  }else {
+    return cljs.core.assoc.call(null, timer, "\ufdd0'last", lib.timer.get_current.call(null))
+  }
 };
 lib.timer.create = function create() {
   return cljs.core.ObjMap.fromObject(["\ufdd0'last", "\ufdd0'ranges", "\ufdd0'sum"], {"\ufdd0'last":lib.timer.get_current.call(null), "\ufdd0'ranges":cljs.core.PersistentVector.EMPTY, "\ufdd0'sum":0})
