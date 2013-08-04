@@ -30644,15 +30644,6 @@ cljs.reader.deregister_tag_parser_BANG_ = function deregister_tag_parser_BANG_(t
 goog.provide("lib.util");
 goog.require("cljs.core");
 goog.require("clojure.string");
-lib.util.$ = function $(selector) {
-  return document.querySelector(selector)
-};
-lib.util.bind_event = function bind_event(element, event, handle) {
-  return element.addEventListener(event, handle, false)
-};
-lib.util.click = function click(element, handle) {
-  return lib.util.bind_event.call(null, element, "click", handle)
-};
 lib.util.div = function div(number, divider) {
   var modulo = cljs.core.mod.call(null, number, divider);
   return(number - modulo) / divider
@@ -30698,18 +30689,18 @@ lib.util.parse_time = function parse_time(time) {
         }
       }else {
         if(cljs.core._EQ_.call(null, cljs.core.count.call(null, times), 2)) {
-          var G__27289 = 0;
-          var G__27290 = cljs.core.conj.call(null, times, stamp__$1);
-          stamp__$1 = G__27289;
-          times = G__27290;
+          var G__12602 = 0;
+          var G__12603 = cljs.core.conj.call(null, times, stamp__$1);
+          stamp__$1 = G__12602;
+          times = G__12603;
           continue
         }else {
           var remainder = cljs.core.mod.call(null, stamp__$1, 60);
           var divided = lib.util.div.call(null, stamp__$1, 60);
-          var G__27291 = divided;
-          var G__27292 = cljs.core.conj.call(null, times, remainder);
-          stamp__$1 = G__27291;
-          times = G__27292;
+          var G__12604 = divided;
+          var G__12605 = cljs.core.conj.call(null, times, remainder);
+          stamp__$1 = G__12604;
+          times = G__12605;
           continue
         }
       }
@@ -30718,7 +30709,7 @@ lib.util.parse_time = function parse_time(time) {
   };
   return format_recur.call(null, stamp, cljs.core.PersistentVector.EMPTY)
 };
-lib.util.format_time = function format_time(time, delims) {
+lib.util.format_time = function format_time(time) {
   return clojure.string.join.call(null, ":", cljs.core.map.call(null, function(chunk) {
     return lib.util.pad.call(null, [cljs.core.str(chunk)].join(""), 2, "0")
   }, lib.util.parse_time.call(null, time)))
@@ -31803,8 +31794,8 @@ options.reset_date = function reset_date(d) {
 };
 options.setup_chronoline_BANG_ = function setup_chronoline_BANG_(node, ranges) {
   var dates = cljs.core.map.call(null, function(range) {
-    return cljs.core.ObjMap.fromObject(["\ufdd0'dates", "\ufdd0'title"], {"\ufdd0'dates":cljs.core.map.call(null, function(p1__3878_SHARP_) {
-      return new Date(p1__3878_SHARP_)
+    return cljs.core.ObjMap.fromObject(["\ufdd0'dates", "\ufdd0'title"], {"\ufdd0'dates":cljs.core.map.call(null, function(p1__10228_SHARP_) {
+      return new Date(p1__10228_SHARP_)
     }, range), "\ufdd0'title":"Coding"})
   }, ranges);
   return new Chronoline(node, cljs.core.clj__GT_js.call(null, dates), cljs.core.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'animated", "\ufdd0'visibleSpan", "\ufdd0'subLabel", "\ufdd0'subSubLabel", "\ufdd0'floatingSubLabels", "\ufdd0'defaultStartDate"], {"\ufdd0'animated":true, "\ufdd0'visibleSpan":864E5, "\ufdd0'subLabel":"day", "\ufdd0'subSubLabel":"yearmonth", "\ufdd0'floatingSubLabels":false, "\ufdd0'defaultStartDate":options.reset_date.call(null, cljs.core.first.call(null, (new cljs.core.Keyword("\ufdd0'dates")).call(null, 
@@ -31817,17 +31808,17 @@ options.time_string = function time_string(time) {
   return clojure.string.join.call(null, lib.util.join_seqs.call(null, chunks, labels))
 };
 options.result_html = function result_html(time) {
-  var dom3882 = document.createElement("li");
-  dom3882.appendChild(function() {
-    var dom3883 = document.createElement("div");
-    return dom3883
+  var dom10232 = document.createElement("li");
+  dom10232.appendChild(function() {
+    var dom10233 = document.createElement("div");
+    return dom10233
   }());
-  dom3882.appendChild(function() {
-    var dom3884 = document.createElement("p");
-    dom3884.appendChild(dommy.template.__GT_node_like.call(null, [cljs.core.str("Total work time: "), cljs.core.str(time)].join("")));
-    return dom3884
+  dom10232.appendChild(function() {
+    var dom10234 = document.createElement("p");
+    dom10234.appendChild(dommy.template.__GT_node_like.call(null, [cljs.core.str("Total work time: "), cljs.core.str(time)].join("")));
+    return dom10234
   }());
-  return dom3882
+  return dom10232
 };
 options.generate_result_html = function generate_result_html(result, container) {
   var time = options.time_string.call(null, (new cljs.core.Keyword("\ufdd0'sum")).call(null, result));
@@ -31838,13 +31829,13 @@ options.generate_result_html = function generate_result_html(result, container) 
   return node
 };
 options.populate_html = function populate_html(container, results, render_func) {
-  var G__3886 = cljs.core.seq.call(null, results);
+  var G__10236 = cljs.core.seq.call(null, results);
   while(true) {
-    if(G__3886) {
-      var result = cljs.core.first.call(null, G__3886);
+    if(G__10236) {
+      var result = cljs.core.first.call(null, G__10236);
       render_func.call(null, result, container);
-      var G__3887 = cljs.core.next.call(null, G__3886);
-      G__3886 = G__3887;
+      var G__10237 = cljs.core.next.call(null, G__10236);
+      G__10236 = G__10237;
       continue
     }else {
       return null
@@ -31853,5 +31844,5 @@ options.populate_html = function populate_html(container, results, render_func) 
   }
 };
 options.results = lib.results.get_results.call(null);
-options.container = lib.util.$.call(null, "#results");
+options.container = document.getElementById("results");
 options.populate_html.call(null, options.container, options.results, options.generate_result_html);

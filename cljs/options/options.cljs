@@ -1,9 +1,9 @@
 (ns options
-  (:use-macros [dommy.macros :only [deftemplate]])
+  (:use-macros [dommy.macros :only [sel1 deftemplate]])
   (:require
     [clojure.string
      :refer [join]]
-    [dommy.core :as dommy]
+    [dommy.core]
     [lib.util :as util]
     [lib.results
      :refer [get-results]]))
@@ -65,6 +65,6 @@
     (render-func result container)))
 
 (def results (get-results))
-(def container (util/$ "#results"))
+(def container (sel1 :#results))
 
 (populate-html container results generate-result-html)

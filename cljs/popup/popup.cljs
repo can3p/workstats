@@ -1,20 +1,23 @@
 (ns popup
+  (:use-macros [dommy.macros :only [sel1]])
   (:require 
     [lib.timer :as timer]
     [lib.results
      :refer [store-result! get-latest!]]
+    [dommy.core
+     :refer [listen! add-class! remove-class! set-html!]]
     [lib.util :as util]))
 
-(def timer-node (util/$ ".timer-current-time"))
-(def body (util/$ ".timer-body"))
-(def pause (util/$ ".timer-pause"))
-(def restart (util/$ ".timer-reset"))
+(def timer-node (sel1 :.timer-current-time))
+(def body (sel1 :.timer-body))
+(def pause (sel1 :.timer-pause))
+(def restart (sel1 :.timer-reset))
 (def time-struct (atom (timer/create)))
 
 (defn set-time! [time]
   (let [
         time-str (util/format-time time)]
-    (set! (.-innerHTML timer-node) time-str)))
+    (set-html! timer-node time-str)))
 
 (defn update-time []
   (when (timer/started? @time-struct)
@@ -29,13 +32,13 @@
 (defn set-timer-state! [state]
   (if (= state "paused")
     (do
-      (.remove (.-classList body) "timer-runs")
-      (.add (.-classList body) "timer-paused"))
+      (remove-class! body :timer-runs)
+      (add-class! body :timer-paused))
     (do
-      (.add (.-classList body) "timer-runs")
-      (.remove (.-classList body) "timer-paused"))))
+      (add-class! body :timer-runs)
+      (remove-class! body :timer-paused))))
 
-(util/click pause (fn [] (if (timer/started? @time-struct)
+(listen! pause :click (fn [] (if (timer/started? @time-struct)
                            (do
                              (set-timer-state! "paused")
                              (timer/stop! time-struct))
@@ -44,15 +47,15 @@
                              (timer/start! time-struct)
                              (update-time)))))
 
-(util/click restart (fn []
+(listen! restart :click (fn []
                       (timer/stop! time-struct)
                       (store-result! time-struct)
                       (timer/create! time-struct)
                       (set-timer-state! "runs")
                       (update-time)))
 
-(util/bind-event js/window "unload" (fn []
-                                      (store-result! time-struct "latest")))
+(listen! js/window :unload (fn []
+                             (store-result! time-struct "latest")))
 
 (restore-result)
 
