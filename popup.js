@@ -31808,7 +31808,7 @@ popup.restore_result = function restore_result() {
   }
 };
 popup.set_timer_state_BANG_ = function set_timer_state_BANG_(state) {
-  if(cljs.core._EQ_.call(null, state, "paused")) {
+  if(cljs.core._EQ_.call(null, state, "\ufdd0'paused")) {
     dommy.core.remove_class_BANG_.call(null, popup.body, "\ufdd0'timer-runs");
     return dommy.core.add_class_BANG_.call(null, popup.body, "\ufdd0'timer-paused")
   }else {
@@ -31818,10 +31818,10 @@ popup.set_timer_state_BANG_ = function set_timer_state_BANG_(state) {
 };
 dommy.core.listen_BANG_.call(null, popup.pause, "\ufdd0'click", function() {
   if(cljs.core.truth_(lib.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
-    popup.set_timer_state_BANG_.call(null, "paused");
+    popup.set_timer_state_BANG_.call(null, "\ufdd0'paused");
     return lib.timer.stop_BANG_.call(null, popup.time_struct)
   }else {
-    popup.set_timer_state_BANG_.call(null, "runs");
+    popup.set_timer_state_BANG_.call(null, "\ufdd0'runs");
     lib.timer.start_BANG_.call(null, popup.time_struct);
     return popup.update_time.call(null)
   }
@@ -31830,7 +31830,7 @@ dommy.core.listen_BANG_.call(null, popup.restart, "\ufdd0'click", function() {
   lib.timer.stop_BANG_.call(null, popup.time_struct);
   lib.results.store_result_BANG_.call(null, popup.time_struct);
   lib.timer.create_BANG_.call(null, popup.time_struct);
-  popup.set_timer_state_BANG_.call(null, "runs");
+  popup.set_timer_state_BANG_.call(null, "\ufdd0'runs");
   return popup.update_time.call(null)
 });
 dommy.core.listen_BANG_.call(null, window, "\ufdd0'unload", function() {
@@ -31838,7 +31838,7 @@ dommy.core.listen_BANG_.call(null, window, "\ufdd0'unload", function() {
 });
 popup.restore_result.call(null);
 if(cljs.core.not.call(null, lib.timer.started_QMARK_.call(null, cljs.core.deref.call(null, popup.time_struct)))) {
-  popup.set_timer_state_BANG_.call(null, "paused")
+  popup.set_timer_state_BANG_.call(null, "\ufdd0'paused")
 }else {
 }
 if(cljs.core.truth_(popup.time_struct)) {

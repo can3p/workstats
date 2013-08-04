@@ -30,7 +30,7 @@
       (reset! time-struct result))))
 
 (defn set-timer-state! [state]
-  (if (= state "paused")
+  (if (= state :paused)
     (do
       (remove-class! body :timer-runs)
       (add-class! body :timer-paused))
@@ -40,10 +40,10 @@
 
 (listen! pause :click (fn [] (if (timer/started? @time-struct)
                            (do
-                             (set-timer-state! "paused")
+                             (set-timer-state! :paused)
                              (timer/stop! time-struct))
                            (do
-                             (set-timer-state! "runs")
+                             (set-timer-state! :runs)
                              (timer/start! time-struct)
                              (update-time)))))
 
@@ -51,7 +51,7 @@
                       (timer/stop! time-struct)
                       (store-result! time-struct)
                       (timer/create! time-struct)
-                      (set-timer-state! "runs")
+                      (set-timer-state! :runs)
                       (update-time)))
 
 (listen! js/window :unload (fn []
@@ -60,7 +60,7 @@
 (restore-result)
 
 (if-not (timer/started? @time-struct)
-  (set-timer-state! "paused"))
+  (set-timer-state! :paused))
 
 (when time-struct
   (set-time! (timer/get-length @time-struct)))
